@@ -28,6 +28,7 @@ a:hover {
 
 h1, h2, h3 {
     color: var(--header-color);
+    text-align: center;
 }
 
 header {
@@ -95,28 +96,6 @@ header {
     font-size: 0.9rem;
 }
 
-/* Process Steps */
-.process-steps {
-    margin: 2rem 0;
-}
-
-.step {
-    padding: 1.5rem;
-    margin-bottom: 1.5rem;
-    border-left: 3px solid var(--link-color);
-    background-color: rgba(255, 255, 255, 0.02);
-}
-
-.step h5 {
-    color: var(--link-color);
-    margin-top: 0;
-    margin-bottom: 1rem;
-    font-size: 1.1rem;
-}
-
-.step ul {
-    margin-left: 1.5rem;
-}
 
 /* Map Container */
 .map-container {
@@ -138,10 +117,12 @@ h4 {
     margin-top: 2rem;
     margin-bottom: 1rem;
     font-size: 1.2rem;
+    text-align: center;
 }
 
 h5 {
     font-size: 1rem;
+    text-align: center;
 }
 
 /* Lists */
@@ -178,9 +159,5 @@ ul {
 
     .members-grid {
         grid-template-columns: 1fr;
-    }
-
-    .step {
-        padding: 1rem;
     }
 }
