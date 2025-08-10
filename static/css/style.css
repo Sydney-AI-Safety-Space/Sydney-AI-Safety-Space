@@ -87,13 +87,14 @@ header {
 }
 
 .member-card h4 {
-    margin: 0.5rem 0;
+    margin: 0 0 0.25rem 0;
     font-size: 1.1rem;
 }
 
 .member-card p {
     color: #999;
     font-size: 0.9rem;
+    margin: 0.1rem 0;
 }
 
 
@@ -128,6 +129,58 @@ h5 {
 /* Lists */
 ul {
     line-height: 1.8;
+}
+
+/* Supporters Section */
+.supporters-list {
+    margin-top: 1.5rem;
+}
+
+.supporter-item {
+    margin-bottom: 2rem;
+    padding: 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background-color: rgba(255, 255, 255, 0.02);
+}
+
+.supporter-item h4 {
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+    color: var(--header-color);
+    font-size: 1.1rem;
+    text-align: left;
+}
+
+.supporter-item p {
+    margin: 0.5rem 0;
+    line-height: 1.6;
+}
+
+/* Other Spaces Section */
+.space-list {
+    margin-top: 1.5rem;
+}
+
+.space-item {
+    margin-bottom: 2rem;
+    padding: 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background-color: rgba(255, 255, 255, 0.02);
+}
+
+.space-item h4 {
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+    color: var(--header-color);
+    font-size: 1.1rem;
+    text-align: left;
+}
+
+.space-item p {
+    margin: 0.5rem 0;
+    line-height: 1.6;
 }
 
 /* For narrow screens, adjust sizes but maintain layout */
