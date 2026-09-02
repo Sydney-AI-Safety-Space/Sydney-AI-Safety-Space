@@ -162,21 +162,6 @@ header {
     overflow: hidden;
 }
 
-/* Embedded preview of external work */
-.work-embed {
-    margin: 0.75rem 0 0.5rem 0;
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    overflow: hidden;
-}
-
-.work-embed iframe {
-    display: block;
-    width: 100%;
-    height: 420px;
-    border: 0;
-}
-
 /* Map Container */
 .map-container {
     margin-top: 1rem;
@@ -346,15 +331,30 @@ ul {
 
 .discussion-item,
 .work-item {
-    margin-bottom: 1.75rem;
+    margin-bottom: 2.25rem;
 }
 
 .discussion-item h4,
 .work-item h4 {
-    margin: 0 0 0.2rem 0;
-    font-size: 1.05rem;
+    margin: 0 0 0.15rem 0;
+    font-size: 1.1rem;
     font-weight: 600;
+    line-height: 1.35;
     text-align: left;
+}
+
+.discussion-item h4 a,
+.work-item h4 a {
+    color: inherit;
+    text-decoration: none;
+}
+
+.discussion-item h4 a:hover,
+.discussion-item h4 a:focus-visible,
+.work-item h4 a:hover,
+.work-item h4 a:focus-visible {
+    text-decoration: underline;
+    text-underline-offset: 3px;
 }
 
 .discussion-item p,
@@ -373,6 +373,13 @@ ul {
 .work-source {
     color: #999;
     font-size: 0.9rem;
+}
+
+.entry-desc {
+    margin-top: 0.55rem;
+    max-width: 62ch;
+    line-height: 1.75;
+    color: #c9c9c9;
 }
 
 /* Member Organisations */
