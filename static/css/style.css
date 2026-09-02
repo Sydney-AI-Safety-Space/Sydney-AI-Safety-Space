@@ -218,6 +218,38 @@ ul {
     font-style: italic;
 }
 
+/* Events */
+.event-list {
+    margin-top: 1.5rem;
+}
+
+.event-item {
+    margin-bottom: 2rem;
+    padding: 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background-color: rgba(255, 255, 255, 0.02);
+}
+
+.event-item h4 {
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+    color: var(--header-color);
+    font-size: 1.1rem;
+    text-align: left;
+}
+
+.event-item p {
+    margin: 0.5rem 0;
+    line-height: 1.6;
+}
+
+.event-date {
+    color: #999;
+    font-size: 0.9rem;
+    margin: 0 0 0.5rem 0;
+}
+
 /* For narrow screens, adjust sizes but maintain layout */
 @media (max-width: 640px) {
     .container {
