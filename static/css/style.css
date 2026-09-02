@@ -187,6 +187,20 @@ ul {
     line-height: 1.6;
 }
 
+/* Site title with logo mark */
+.site-title {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.site-logo {
+    height: 1.6em;
+    width: auto;
+    flex-shrink: 0;
+}
+
 /* Site Navigation */
 .site-nav {
     display: flex;
@@ -238,6 +252,11 @@ ul {
     color: #999;
     font-size: 0.85rem;
     margin-top: 0.5rem;
+}
+
+/* Past Discussions heading sits quieter than the live sections */
+#past-discussions h3 {
+    color: #999;
 }
 
 /* Past Discussions */
