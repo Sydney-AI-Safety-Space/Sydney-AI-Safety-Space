@@ -413,6 +413,30 @@ ul {
     color: #c9c9c9;
 }
 
+/* Optional: a faint preview image revealed on hover, masked away from the text */
+.work-item {
+    position: relative;
+    overflow: hidden;
+}
+
+.work-item[style*='--entry-shot']::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: var(--entry-shot);
+    background-size: cover;
+    background-position: right center;
+    opacity: 0;
+    transition: opacity 0.25s ease;
+    pointer-events: none;
+    -webkit-mask-image: linear-gradient(to left, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 62%);
+    mask-image: linear-gradient(to left, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 62%);
+}
+
+.work-item[style*='--entry-shot']:hover::before {
+    opacity: 0.22;
+}
+
 /* Member Organisations */
 .org-list {
     list-style: none;
