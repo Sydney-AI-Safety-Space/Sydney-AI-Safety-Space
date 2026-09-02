@@ -334,7 +334,13 @@ ul {
     display: grid;
     grid-template-columns: 7.5rem 1fr;
     column-gap: 1.5rem;
-    margin-bottom: 2.25rem;
+    margin-bottom: 1.75rem;
+}
+
+.discussion-item:not(:last-child),
+.work-item:not(:last-child) {
+    padding-bottom: 1.75rem;
+    border-bottom: 1px solid var(--border-color);
 }
 
 /* everything except the date sits in the right-hand column */
