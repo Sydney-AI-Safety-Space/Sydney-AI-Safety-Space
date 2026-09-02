@@ -276,33 +276,29 @@ ul {
     display: flex;
     justify-content: center;
     flex-wrap: wrap;
-    gap: 0.6rem;
-    padding-bottom: 1rem;
+    gap: 2rem;
+    padding-bottom: 0.75rem;
     margin-bottom: 2.5rem;
     border-bottom: 1px solid var(--border-color);
 }
 
 .site-nav a {
-    color: var(--text-color);
-    font-size: 0.95rem;
-    padding: 0.4rem 0.9rem;
-    border: 1px solid var(--border-color);
-    border-radius: 6px;
-    background-color: rgba(255, 255, 255, 0.02);
-    transition: border-color 0.15s ease, color 0.15s ease, background-color 0.15s ease;
+    color: #8c8c8c;
+    font-size: 1rem;
+    padding-bottom: 0.35rem;
+    border-bottom: 2px solid transparent;
+    transition: color 0.15s ease;
 }
 
 .site-nav a:hover {
-    color: var(--link-color);
+    color: var(--text-color);
     text-decoration: none;
-    border-color: var(--link-color);
-    background-color: rgba(255, 255, 255, 0.05);
+    border-bottom-color: var(--border-color);
 }
 
 .site-nav a[aria-current="page"] {
     color: var(--link-color);
-    border-color: var(--link-color);
-    background-color: rgba(161, 205, 255, 0.08);
+    border-bottom-color: var(--link-color);
 }
 
 /* Placeholder note for pages still being filled in */
@@ -545,26 +541,5 @@ ul {
 
     .event-embed iframe {
         height: 740px;
-    }
-}
-
-/* Wide screens: stack the nav as a rail to the right of the content */
-@media (min-width: 1200px) {
-    .site-nav {
-        position: fixed;
-        top: 50%;
-        right: max(1.5rem, calc(50% - 400px - 10rem));
-        transform: translateY(-50%);
-        flex-direction: column;
-        align-items: stretch;
-        width: 9rem;
-        gap: 0.5rem;
-        margin: 0;
-        padding: 0;
-        border-bottom: none;
-    }
-
-    .site-nav a {
-        text-align: center;
     }
 }
