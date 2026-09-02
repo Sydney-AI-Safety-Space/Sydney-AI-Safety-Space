@@ -186,10 +186,9 @@ ul {
 /* Site Navigation */
 .site-nav {
     display: flex;
-    justify-content: center;
+    justify-content: flex-end;
     flex-wrap: wrap;
     gap: 2rem;
-    padding-left: 5rem;
     padding-bottom: 0.75rem;
     margin-bottom: 2.5rem;
     border-bottom: 1px solid var(--border-color);
@@ -327,9 +326,9 @@ ul {
     }
 
     .site-nav {
+        justify-content: center;
         gap: 1.25rem;
         margin-bottom: 1.5rem;
-        padding-left: 0;
     }
 
     .site-nav a {
