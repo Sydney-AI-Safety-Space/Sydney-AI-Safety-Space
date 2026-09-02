@@ -98,6 +98,70 @@ header {
 }
 
 
+/* Contact Form */
+.contact-form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    margin-top: 1rem;
+}
+
+.contact-form label {
+    font-size: 0.85rem;
+    color: #999;
+}
+
+.contact-form input,
+.contact-form textarea {
+    font-family: inherit;
+    font-size: 0.9rem;
+    color: var(--text-color);
+    background-color: rgba(255, 255, 255, 0.02);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 0.5rem 0.6rem;
+    margin-bottom: 0.75rem;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.contact-form textarea {
+    resize: vertical;
+    min-height: 6rem;
+}
+
+.contact-form input:focus,
+.contact-form textarea:focus {
+    outline: none;
+    border-color: var(--link-color);
+}
+
+.contact-form button {
+    align-self: flex-start;
+    font-family: inherit;
+    font-size: 0.9rem;
+    color: var(--text-color);
+    background-color: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 0.5rem 1.1rem;
+    cursor: pointer;
+}
+
+.contact-form button:hover {
+    border-color: var(--link-color);
+    color: var(--link-color);
+}
+
+/* Honeypot: hidden from people, visible to bots */
+.cf-hp {
+    position: absolute;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+}
+
 /* Map Container */
 .map-container {
     margin-top: 1rem;

@@ -65,7 +65,7 @@
 
     <section id="visit" class="container">
         <div class="content">
-            <h3>Visit Us</h3>
+            <h3>Visit Us!</h3>
             <p>Come cowork with us for free! Anyone interested in AI safety can drop by as a guest, for lunch or a day of coworking. You're welcome to keep coming back as often as you like. Just <a href="mailto:hunter@hunterjay.com">email</a> to let us know you're coming, and we'll add you to the Slack (shared with Australian EAs) to introduce yourself to the community.</p>
 
             <p>When you arrive, push open the door (or knock if it's locked), and come up the stairs to the coworking area!</p>
@@ -88,6 +88,24 @@
                 <li>Email: <a href="mailto:hunter@hunterjay.com">hunter@hunterjay.com</a></li>
                 <li>Phone: <a href="tel:+61422420037">+61 422 420 037</a></li>
             </ul>
+
+            <p>Or send us a message here:</p>
+            <!-- TODO: replace YOUR_FORM_ID with the Formspree form ID before going live -->
+            <form class="contact-form" action="https://formspree.io/f/YOUR_FORM_ID" method="POST">
+                <label for="cf-name">Name</label>
+                <input id="cf-name" type="text" name="name" autocomplete="name" required>
+
+                <label for="cf-email">Your email</label>
+                <input id="cf-email" type="email" name="email" autocomplete="email" required>
+
+                <label for="cf-message">Message</label>
+                <textarea id="cf-message" name="message" rows="5" required></textarea>
+
+                <input type="hidden" name="_subject" value="Sydney AI Safety Space - website enquiry">
+                <p class="cf-hp" aria-hidden="true"><label for="cf-hp">Leave this field empty</label><input id="cf-hp" type="text" name="_gotcha" tabindex="-1" autocomplete="off"></p>
+
+                <button type="submit">Send message</button>
+            </form>
         </div>
     </section>
 
