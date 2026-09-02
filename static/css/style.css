@@ -162,6 +162,21 @@ header {
     overflow: hidden;
 }
 
+/* Embedded preview of external work */
+.work-embed {
+    margin: 0.75rem 0 0.5rem 0;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.work-embed iframe {
+    display: block;
+    width: 100%;
+    height: 420px;
+    border: 0;
+}
+
 /* Map Container */
 .map-container {
     margin-top: 1rem;
