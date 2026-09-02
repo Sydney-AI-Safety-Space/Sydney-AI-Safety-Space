@@ -324,32 +324,38 @@ ul {
 }
 
 /* Past Discussions */
-.discussion-list {
+.discussion-list,
+.work-list {
     margin-top: 1.5rem;
 }
 
-.discussion-item {
+.discussion-item,
+.work-item {
     margin-bottom: 1.75rem;
 }
 
-.discussion-item h4 {
+.discussion-item h4,
+.work-item h4 {
     margin: 0 0 0.2rem 0;
     font-size: 1.05rem;
     font-weight: 600;
     text-align: left;
 }
 
-.discussion-item p {
+.discussion-item p,
+.work-item p {
     margin: 0.2rem 0;
     line-height: 1.6;
 }
 
-.discussion-date {
+.discussion-date,
+.work-date {
     color: #999;
     font-size: 0.85rem;
 }
 
-.discussion-source {
+.discussion-source,
+.work-source {
     color: #999;
     font-size: 0.9rem;
 }
