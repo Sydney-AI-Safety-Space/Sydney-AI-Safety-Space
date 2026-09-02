@@ -270,28 +270,33 @@ ul {
     display: flex;
     justify-content: center;
     flex-wrap: wrap;
-    gap: 2rem;
-    padding-bottom: 0.75rem;
+    gap: 0.6rem;
+    padding-bottom: 1rem;
     margin-bottom: 2.5rem;
     border-bottom: 1px solid var(--border-color);
 }
 
 .site-nav a {
     color: var(--text-color);
-    font-size: 1rem;
-    padding-bottom: 0.35rem;
-    border-bottom: 2px solid transparent;
+    font-size: 0.95rem;
+    padding: 0.4rem 0.9rem;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    background-color: rgba(255, 255, 255, 0.02);
+    transition: border-color 0.15s ease, color 0.15s ease, background-color 0.15s ease;
 }
 
 .site-nav a:hover {
     color: var(--link-color);
     text-decoration: none;
-    border-bottom-color: var(--border-color);
+    border-color: var(--link-color);
+    background-color: rgba(255, 255, 255, 0.05);
 }
 
 .site-nav a[aria-current="page"] {
     color: var(--link-color);
-    border-bottom-color: var(--link-color);
+    border-color: var(--link-color);
+    background-color: rgba(161, 205, 255, 0.08);
 }
 
 /* Placeholder note for pages still being filled in */
@@ -430,13 +435,13 @@ ul {
     transition: opacity 0.25s ease;
     pointer-events: none;
     -webkit-mask-image: linear-gradient(to left, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 25%, rgba(0,0,0,0) 55%);
-    mask-image: linear-gradient(to left, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 25%, rgba(0,0,0,0) 55%);
+    mask-image: linear-gradient(to left, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 20%, rgba(0,0,0,0) 55%);
 }
 
 .work-item[style*='--entry-shot']:hover::before {
     /* light screenshots read at a lower opacity than dark ones;
        override per entry with --entry-shot-opacity */
-    opacity: var(--entry-shot-opacity, 0.25);
+    opacity: var(--entry-shot-opacity, 0.28);
 }
 
 /* Member Organisations */
@@ -534,5 +539,26 @@ ul {
 
     .event-embed iframe {
         height: 740px;
+    }
+}
+
+/* Wide screens: stack the nav as a rail to the right of the content */
+@media (min-width: 1200px) {
+    .site-nav {
+        position: fixed;
+        top: 50%;
+        right: max(1.5rem, calc(50% - 400px - 10rem));
+        transform: translateY(-50%);
+        flex-direction: column;
+        align-items: stretch;
+        width: 9rem;
+        gap: 0.5rem;
+        margin: 0;
+        padding: 0;
+        border-bottom: none;
+    }
+
+    .site-nav a {
+        text-align: center;
     }
 }
