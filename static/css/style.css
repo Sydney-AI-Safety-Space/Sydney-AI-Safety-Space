@@ -331,7 +331,16 @@ ul {
 
 .discussion-item,
 .work-item {
+    display: grid;
+    grid-template-columns: 7.5rem 1fr;
+    column-gap: 1.5rem;
     margin-bottom: 2.25rem;
+}
+
+/* everything except the date sits in the right-hand column */
+.discussion-item > :not(.discussion-date),
+.work-item > :not(.work-date) {
+    grid-column: 2;
 }
 
 .discussion-item h4,
@@ -365,8 +374,13 @@ ul {
 
 .discussion-date,
 .work-date {
+    grid-column: 1;
+    grid-row: 1;
+    margin: 0;
+    padding-top: 0.15rem;
     color: #999;
     font-size: 0.85rem;
+    line-height: 1.4;
 }
 
 .discussion-source,
@@ -458,6 +472,17 @@ ul {
 
     .site-nav a {
         font-size: 0.9rem;
+    }
+
+    .discussion-item,
+    .work-item {
+        display: block;
+    }
+
+    .discussion-date,
+    .work-date {
+        margin-bottom: 0.2rem;
+        padding-top: 0;
     }
 
     .event-embed iframe {
