@@ -6,6 +6,12 @@
     --border-color: #333333;
 }
 
+html {
+    /* always reserve the scrollbar gutter, so short pages do not shift
+       the centred column sideways relative to long ones */
+    scrollbar-gutter: stable;
+}
+
 body {
     background-color: var(--bg-color);
     color: var(--text-color);
