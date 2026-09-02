@@ -434,7 +434,9 @@ ul {
 }
 
 .work-item[style*='--entry-shot']:hover::before {
-    opacity: 0.22;
+    /* light screenshots read at a lower opacity than dark ones;
+       override per entry with --entry-shot-opacity */
+    opacity: var(--entry-shot-opacity, 0.38);
 }
 
 /* Member Organisations */

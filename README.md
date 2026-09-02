@@ -23,3 +23,11 @@ location (`static/css/`) rather than the page's.
 Aim for roughly 150KB per image. The screenshot is shown at 22% opacity
 behind a mask, so quality barely matters. Dark pages will be very subtle;
 light pages will show more.
+
+If a screenshot reads too faint or too bright, override the opacity on that
+entry alongside the image:
+
+    style="--entry-shot: url('/static/work-NAME.jpg'); --entry-shot-opacity: 0.5"
+
+Dark screenshots generally need a higher value than light ones. The default
+is 0.38.
