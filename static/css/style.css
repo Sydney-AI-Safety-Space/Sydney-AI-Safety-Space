@@ -428,8 +428,6 @@ ul {
     opacity: 0;
     transition: opacity 0.25s ease;
     pointer-events: none;
-    -webkit-mask-image: linear-gradient(to left, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 62%);
-    mask-image: linear-gradient(to left, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 62%);
 }
 
 .work-item[style*='--entry-shot']:hover::before {
