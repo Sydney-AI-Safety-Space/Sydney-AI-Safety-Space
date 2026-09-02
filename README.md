@@ -21,10 +21,11 @@ The path is relative to `static/css/`, not to the page. That is because
 location. `../work-NAME.jpg` therefore points at `static/work-NAME.jpg`,
 and works whether the site is served over HTTP or opened as a local file.
 
-Aim for roughly 150KB per image. The screenshot is shown at 38% opacity
-across the whole entry, so quality barely matters. Dark pages will be very
-subtle; light pages will show more. Because the image sits behind the text,
-prefer a screenshot without large blocks of dense body copy.
+Aim for roughly 150KB per image. The screenshot is shown at 38% opacity and
+masked to the right-hand third of the entry, so quality barely matters. Dark
+pages will be very subtle; light pages will show more. Only the right side is
+visible, so choose a crop with something worth seeing there - a figure or a
+chart rather than empty margin.
 
 If a screenshot reads too faint or too bright, override the opacity on that
 entry alongside the image:

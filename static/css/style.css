@@ -429,12 +429,14 @@ ul {
     opacity: 0;
     transition: opacity 0.25s ease;
     pointer-events: none;
+    -webkit-mask-image: linear-gradient(to left, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 32%, rgba(0,0,0,0) 55%);
+    mask-image: linear-gradient(to left, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 32%, rgba(0,0,0,0) 55%);
 }
 
 .work-item[style*='--entry-shot']:hover::before {
     /* light screenshots read at a lower opacity than dark ones;
        override per entry with --entry-shot-opacity */
-    opacity: var(--entry-shot-opacity, 0.10);
+    opacity: var(--entry-shot-opacity, 0.075);
 }
 
 /* Member Organisations */
