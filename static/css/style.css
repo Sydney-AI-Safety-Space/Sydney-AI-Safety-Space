@@ -282,6 +282,17 @@ ul {
     white-space: nowrap;
 }
 
+.org-list a {
+    color: inherit;
+    text-decoration: none;
+}
+
+.org-list a:hover,
+.org-list a:focus-visible {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
 .org-list li:not(:last-child)::after {
     content: "\00b7";
     color: #555;
