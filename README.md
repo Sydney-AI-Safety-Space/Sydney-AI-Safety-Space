@@ -14,11 +14,12 @@ It is optional - entries without one just get the plain hover tint.
 
 3. Add the image to that entry's `<div class="work-item">` in `work.html`:
 
-   <div class="work-item" style="--entry-shot: url('/static/work-NAME.jpg')">
+   <div class="work-item" style="--entry-shot: url('../work-NAME.jpg')">
 
-The path must start with `/`. A relative path will silently fail, because
+The path is relative to `static/css/`, not to the page. That is because
 `url()` inside a CSS custom property resolves against the stylesheet's
-location (`static/css/`) rather than the page's.
+location. `../work-NAME.jpg` therefore points at `static/work-NAME.jpg`,
+and works whether the site is served over HTTP or opened as a local file.
 
 Aim for roughly 150KB per image. The screenshot is shown at 22% opacity
 behind a mask, so quality barely matters. Dark pages will be very subtle;
@@ -27,7 +28,7 @@ light pages will show more.
 If a screenshot reads too faint or too bright, override the opacity on that
 entry alongside the image:
 
-    style="--entry-shot: url('/static/work-NAME.jpg'); --entry-shot-opacity: 0.5"
+    style="--entry-shot: url('../work-NAME.jpg'); --entry-shot-opacity: 0.5"
 
 Dark screenshots generally need a higher value than light ones. The default
 is 0.38.
