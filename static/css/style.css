@@ -462,6 +462,7 @@ ul {
 
 .work-group {
     margin: 3rem 0 0 0;
+    font-style: italic;
     padding-bottom: 0.5rem;
     font-size: 1.15rem;
     font-weight: 700;
@@ -471,7 +472,7 @@ ul {
 }
 
 .work-group:first-of-type {
-    margin-top: 1.5rem;
+    margin-top: 2.5rem;
 }
 
 .work-group + .work-list {
@@ -569,7 +570,7 @@ ul {
 
 .entry-desc {
     margin-top: 0.55rem;
-    max-width: 62ch;
+    max-width: 82ch;
     line-height: 1.75;
     color: #c9c9c9;
 }
