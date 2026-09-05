@@ -107,19 +107,19 @@ header {
 /* Contact: form on the left, details filling the space beside it */
 .contact-layout {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr);
+    grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
     gap: 2.5rem;
     align-items: start;
     margin-top: 1.25rem;
 }
 
 .contact-form {
-    grid-column: 2;
+    grid-column: 1;
     grid-row: 1;
 }
 
 .contact-details {
-    grid-column: 1;
+    grid-column: 2;
     grid-row: 1;
 }
 
@@ -451,6 +451,24 @@ ul {
 /* Past Discussions heading sits quieter than the live sections */
 #past-discussions h3 {
     color: #999;
+}
+
+.work-group {
+    margin: 2.5rem 0 0 0;
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #999;
+    text-align: left;
+}
+
+.work-group:first-of-type {
+    margin-top: 1.5rem;
+}
+
+.work-group + .work-list {
+    margin-top: 1rem;
 }
 
 /* Past Discussions */
