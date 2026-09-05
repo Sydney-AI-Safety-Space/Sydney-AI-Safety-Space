@@ -476,7 +476,7 @@ ul {
 }
 
 .work-group + .work-list {
-    margin-top: 1rem;
+    margin-top: 0.25rem;
 }
 
 /* Past Discussions */
@@ -502,7 +502,7 @@ ul {
 
 /* only work entries get the padded, hoverable block */
 .work-item {
-    padding: 1.5rem 1rem 1.15rem 1rem;
+    padding: 1rem 1rem 0.85rem 1rem;
     margin: 0 -1rem 0.75rem -1rem;
     border-radius: 8px;
     transition: background-color 0.15s ease;
