@@ -134,7 +134,7 @@
                         if (res.ok) {
                             form.reset();
                             status.className = 'form-status form-status-ok';
-                            status.textContent = 'Thanks - we will be in touch soon.';
+                            status.innerHTML = 'Thanks - we will be in touch soon. If you have not heard back within a week, please <a href="mailto:hunter@hunterjay.com">email us</a> directly.';
                             return;
                         }
                         return res.json().then(function (data) {
