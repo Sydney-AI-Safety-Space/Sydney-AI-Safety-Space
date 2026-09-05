@@ -261,10 +261,14 @@ ul {
 /* Supporters Section */
 .supporters-list {
     margin-top: 1.5rem;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    align-items: start;
 }
 
 .supporter-item {
-    margin-bottom: 2rem;
+    margin-bottom: 0;
     padding: 1rem;
     border: 1px solid var(--border-color);
     border-radius: 8px;
@@ -577,6 +581,10 @@ ul {
     }
 
     .members-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .supporters-list {
         grid-template-columns: 1fr;
     }
 
