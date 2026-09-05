@@ -335,6 +335,11 @@ ul {
     font-style: italic;
 }
 
+/* Monday Meals and Friday Discussions read as a pair */
+#lunches {
+    margin-bottom: 0.5rem;
+}
+
 /* Event Embed */
 .event-embed {
     margin-top: 1.5rem;
