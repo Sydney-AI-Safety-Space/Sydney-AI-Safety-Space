@@ -87,12 +87,13 @@
         <div class="content">
             <h3>Contact</h3>
             <p>Interested in visiting or have questions? Get in touch:</p>
-            <ul>
-                <li>Email: <a href="mailto:hunter@hunterjay.com">hunter@hunterjay.com</a></li>
-                <li>Phone: <a href="tel:+61422420037">+61 422 420 037</a></li>
-            </ul>
+            <div class="contact-layout">
+                <div class="contact-details">
+                    <p class="contact-detail"><span>Email</span><a href="mailto:hunter@hunterjay.com">hunter@hunterjay.com</a></p>
+                    <p class="contact-detail"><span>Phone</span><a href="tel:+61422420037">+61 422 420 037</a></p>
+                    <p class="contact-note">Planning a visit? Tell us roughly when you would like to come and we will look out for you on the day.</p>
+                </div>
 
-            <p>Or send us a message here:</p>
             <form class="contact-form" action="https://formspree.io/f/mqpklork" method="POST">
                 <label for="cf-name">Name</label>
                 <input id="cf-name" type="text" name="name" autocomplete="name" required>
@@ -100,8 +101,9 @@
                 <label for="cf-email">Your email</label>
                 <input id="cf-email" type="email" name="email" autocomplete="email" required>
 
-                <label for="cf-message">Message</label>
-                <textarea id="cf-message" name="message" rows="5" required></textarea>
+                <label for="cf-message">What would you like to tell us?</label>
+                <p class="field-hint" id="cf-message-hint">Visiting? A day and rough time is all we need. Anything else is welcome too.</p>
+                <textarea id="cf-message" name="message" rows="5" aria-describedby="cf-message-hint" placeholder="Hi, I am Sam - I would like to drop by on Tuesday around 10am." required></textarea>
 
                 <input type="hidden" name="_subject" value="Sydney AI Safety Space - website enquiry">
                 <p class="cf-hp" aria-hidden="true"><label for="cf-hp">Leave this field empty</label><input id="cf-hp" type="text" name="_gotcha" tabindex="-1" autocomplete="off"></p>
@@ -109,6 +111,7 @@
                 <button type="submit">Send message</button>
                 <p class="form-status" role="status" aria-live="polite" hidden></p>
             </form>
+            </div>
 
             <script>
             // Submit in the background so visitors stay on this page. Without

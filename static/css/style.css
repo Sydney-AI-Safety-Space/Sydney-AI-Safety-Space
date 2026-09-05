@@ -104,6 +104,53 @@ header {
 }
 
 
+/* Contact: form on the left, details filling the space beside it */
+.contact-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+    gap: 2.5rem;
+    align-items: start;
+    margin-top: 1.25rem;
+}
+
+.contact-form {
+    grid-column: 1;
+    grid-row: 1;
+}
+
+.contact-details {
+    grid-column: 2;
+    grid-row: 1;
+}
+
+.contact-detail {
+    margin: 0 0 1rem 0;
+}
+
+.contact-detail span {
+    display: block;
+    color: #999;
+    font-size: 0.8rem;
+    margin-bottom: 0.1rem;
+}
+
+.contact-note {
+    margin-top: 1.5rem;
+    color: #999;
+    font-size: 0.85rem;
+    line-height: 1.6;
+}
+
+.field-hint {
+    margin: 0 0 0.35rem 0;
+    color: #999;
+    font-size: 0.8rem;
+}
+
+.contact-form ::placeholder {
+    color: #666;
+}
+
 /* Contact Form */
 .contact-form {
     display: flex;
@@ -599,6 +646,17 @@ ul {
 
     .supporters-list {
         grid-template-columns: 1fr;
+    }
+
+    .contact-layout {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+
+    .contact-form,
+    .contact-details {
+        grid-column: auto;
+        grid-row: auto;
     }
 
     .gallery {
