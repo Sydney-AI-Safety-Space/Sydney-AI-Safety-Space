@@ -429,6 +429,12 @@ ul {
     margin-bottom: 0.5rem;
 }
 
+.next-event {
+    color: #999;
+    font-size: 0.9rem;
+    margin-top: -0.25rem;
+}
+
 /* Event Embed */
 .event-embed {
     margin-top: 1.5rem;
@@ -454,13 +460,13 @@ ul {
 }
 
 .work-group {
-    margin: 2.5rem 0 0 0;
-    font-size: 0.85rem;
-    font-weight: 600;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    color: #999;
+    margin: 3rem 0 0 0;
+    padding-bottom: 0.5rem;
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--header-color);
     text-align: left;
+    border-bottom: 1px solid var(--border-color);
 }
 
 .work-group:first-of-type {
