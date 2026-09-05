@@ -337,22 +337,15 @@ ul {
 
 /* Event Embed */
 .event-embed {
-    margin-top: 1rem;
-    margin-bottom: 1.25rem;
+    margin-top: 1.5rem;
+    margin-bottom: 2rem;
     width: 100%;
-    overflow: hidden;
 }
 
 .event-embed iframe {
-    /* rendered at full size then scaled to 80%, so nothing is clipped;
-       125% width x 0.8 = 100%, and the negative margin reclaims the
-       vertical space the transform leaves behind */
+    width: 100%;
+    height: 430px;
     display: block;
-    width: 125%;
-    height: 400px;
-    transform: scale(0.8);
-    transform-origin: top left;
-    margin-bottom: -80px;
 }
 
 .embed-fallback {
@@ -596,7 +589,6 @@ ul {
     }
 
     .event-embed iframe {
-        height: 768px;
-        margin-bottom: -154px;
+        height: 740px;
     }
 }
