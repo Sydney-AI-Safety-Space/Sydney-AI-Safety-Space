@@ -196,6 +196,31 @@ header {
     border-radius: 8px;
 }
 
+/* Member cards: names link with a persistent underline so they are
+   discoverable, organisations stay muted with hover only */
+.member-card h4 a {
+    color: inherit;
+    text-decoration: underline;
+    text-decoration-color: #555;
+    text-underline-offset: 3px;
+}
+
+.member-card h4 a:hover,
+.member-card h4 a:focus-visible {
+    text-decoration-color: var(--text-color);
+}
+
+.member-card p a {
+    color: inherit;
+    text-decoration: none;
+}
+
+.member-card p a:hover,
+.member-card p a:focus-visible {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
 /* Map Container */
 .map-container {
     margin-top: 1rem;
