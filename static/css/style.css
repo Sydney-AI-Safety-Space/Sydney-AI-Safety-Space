@@ -159,6 +159,20 @@ header {
     color: var(--link-color);
 }
 
+.form-status {
+    margin-top: 0.75rem;
+    font-size: 0.9rem;
+    color: #999;
+}
+
+.form-status-ok {
+    color: var(--link-color);
+}
+
+.form-status-error {
+    color: #ff9d9d;
+}
+
 /* Honeypot: hidden from people, visible to bots */
 .cf-hp {
     position: absolute;
