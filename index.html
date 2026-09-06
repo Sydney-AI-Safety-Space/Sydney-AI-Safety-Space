@@ -6,7 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sydney AI Safety Space</title>
     <link rel="stylesheet" href="static/css/style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <link rel="icon" href="static/favicon.ico" type="image/x-icon">
     <link rel="shortcut icon" href="static/favicon.ico" type="image/x-icon">
 </head>
@@ -21,29 +20,38 @@
     </section>
     -->
 
-    <h2 style="text-align: center;">Sydney AI Safety Space</h2>
+    <h2 class="site-title"><img src="static/logo-mark.svg" alt="" class="site-logo">Sydney AI Safety Space</h2>
+
+    <nav class="site-nav">
+        <a href="index.html" aria-current="page">Home</a>
+        <a href="members.html">Members</a>
+        <a href="events.html">Events</a>
+        <a href="work.html">Recent Work</a>
+    </nav>
 
     <section id="about" class="container">
         <div class="content">
             <p>The Sydney AI Safety Space is a volunteer run and donation-supported coworking space based at Broad Church, 3 Little Queen St, Chippendale.</p>
-            <p>We provide free office space for people working in the field of AI safety (including policy work, technical research, field building, personal study, or engineering projects).</p>
+            <p>We provide free office space for people working in or trying to enter the field of AI safety (including policy work, technical research, field building, personal study, or other projects).</p>
         </div>
     </section>
 
     <section id="community-photo" class="container">
         <div class="content" style="max-width: 100%; width: 100%;">
-            <div class="photo-placeholder">
-                <img src="static/sass_2.jpg" alt="Sydney AI Safety Space Community" style="width: 100%; height: auto; border-radius: 8px;">
+            <div class="gallery">
+                <img src="static/gallery-people.jpg" alt="Members coworking in the Sydney AI Safety Space">
+                <img src="static/gallery-kitchen.jpg" alt="The communal kitchen and lounge at Broad Church">
+                <img src="static/gallery-door.jpg" alt="The Broad Church building at 3 Little Queen St">
             </div>
         </div>
     </section>
 
     <section id="visit" class="container">
         <div class="content">
-            <h3>Visit as a Guest</h3>
-            <p>Come cowork with us for free! We welcome anyone interested in AI safety to drop by for lunch or a day of coworking, and you're welcome to keep coming back as often as you like. Just email to let us know you're coming, and we'll add you to the Slack (shared with Australian EAs) to introduce yourself to the community.</p>
+            <h3>Visit Us</h3>
+            <p>Come cowork with us for free! Anyone interested in AI safety can drop by as a guest, for lunch, or for regular coworking. You're welcome to keep coming back as often as you like. Just <a href="mailto:hunter@hunterjay.com">email us</a> or fill in the <a href="#contact">contact form</a> below to let us know you're coming, and we'll add you to the Slack (shared with Australian EAs) to introduce yourself to the community.</p>
 
-            <p>When you arrive, push open the door (or knock if it's locked), and come up the stairs to the coworking area!</p>
+            <p>When you arrive, push open the door (or buzz if it's locked), and come up the stairs to the coworking area.</p>
 
             <p>Our space operates on a hot desking model, with an average occupancy of around five members:</p>
             <ul>
@@ -55,145 +63,98 @@
         </div>
     </section>
 
-    <section id="lunches" class="container">
+    <section id="orgs" class="container">
         <div class="content">
-            <h3>Monday Meals</h3>
-            <p>The Schelling point weekly meetup! Bring your own food for a group lunch at Broad Church every Monday at 12:30pm - great chance to meet everyone! Microwaves, utensils, and hot water available.</p>
-        </div>
-    </section>
-    
-    <section id="membership" class="container">
-        <div class="content">
-            <h3>Become a Member</h3>
-            <p>Coming in regularly and working on AI safety? You're a member! Membership involves:</p>
-            <ul>
-                <li>Priority access to desks.</li>
-                <li>Committing to volunteer for the space (help with events, maintenance, etc).</li>
-                <li>Sharing a brief quarterly update on your work.</li>
+            <h3>Where Our Members Work in AI Safety</h3>
+            <ul class="org-list">
+                <li><a href="https://www.industry.gov.au/science-technology-and-innovation/technology/artificial-intelligence/ai-safety-institute" target="_blank" rel="noopener noreferrer">Australian AI Safety Institute</a></li>
+                <li><a href="https://harmonyintelligence.com/" target="_blank" rel="noopener noreferrer">Harmony Intelligence</a></li>
+                <li><a href="https://www.arcadiaimpact.org/" target="_blank" rel="noopener noreferrer">Arcadia Impact</a></li>
+                <li><a href="https://lyptusresearch.org/" target="_blank" rel="noopener noreferrer">Lyptus Research</a></li>
+                <li><a href="https://law-ai.org/" target="_blank" rel="noopener noreferrer">Institute for Law & AI</a></li>
+                <li><a href="https://www.taraprogram.org/" target="_blank" rel="noopener noreferrer">Technical Alignment Research Accelerator</a></li>
+                <li><a href="https://www.goodancestors.org.au/" target="_blank" rel="noopener noreferrer">Good Ancestors</a></li>
+                <li><a href="https://far.ai/" target="_blank" rel="noopener noreferrer">FAR AI</a></li>
+                <li><a href="https://www.gigascale-labs.org/" target="_blank" rel="noopener noreferrer">Gigascale Laboratories</a></li>
+                <li><a href="https://faultlineai.com/" target="_blank" rel="noopener noreferrer">Fault Line AI</a></li>
             </ul>
-            <p>We have a limited number of physical keys for after hours access, which are distributed among a subset of members.</p>
+            <p class="org-footnote">Plus members in industry, independent researchers, and students - <a href="members.html">see all members</a>.</p>
         </div>
     </section>
 
-    <section id="members" class="container">
-        <div class="content">
-            <h3>Current Members</h3>
-            <div class="members-grid">
-                <div class="member-card">
-                    <h4>Hunter Jay</h4>
-                    <p>Australian AI Safety Institute</p>
-                </div>
-                <div class="member-card">
-                    <h4>Soroush Pour</h4>
-                    <p>Harmony Intelligence</p>
-                </div>
-                <div class="member-card">
-                    <h4>James Dao</h4>
-                    <p>Independent</p>
-                </div>
-                <div class="member-card">
-                    <h4>Chris Mathwin</h4>
-                    <p>Harmony Intelligence</p>
-                </div>
-                <div class="member-card">
-                    <h4>Tania Sadhani</h4>
-                    <p>Arcadia Impact</p>
-                </div>
-                <div class="member-card">
-                    <h4>Eric Ren</h4>
-                    <p>Student</p>
-                </div>
-                <div class="member-card">
-                    <h4>Chris Leong</h4>
-                    <p>Independent</p>
-                </div>
-                <div class="member-card">
-                    <h4>Sean Peters</h4>
-                    <p>Lyptus Research</p>
-                </div>
-                <div class="member-card">
-                    <h4>Slava Chalnev</h4>
-                    <p>Lyptus Research</p>
-                </div>
-                <div class="member-card">
-                    <h4>Jack Payne</h4>
-                    <p>Lyptus Research</p>
-                </div>
-                <div class="member-card">
-                    <h4>Janna Tay</h4>
-                    <p>Institute for Law & AI</p>
-                </div>
-                <div class="member-card">
-                    <h4>Zac Broeren</h4>
-                    <p>TARA</p>
-                </div>
-                <div class="member-card">
-                    <h4>Yanni Kyriacos</h4>
-                    <p>TARA</p>
-                </div>
-                <div class="member-card">
-                    <h4>Jasper Timm</h4>
-                    <p>FAR AI</p>
-                </div>
-                <div class="member-card">
-                    <h4>Stephen Elliott</h4>
-                    <p>Gigascale Laboratories</p>
-                </div>
-                <div class="member-card">
-                    <h4>Chris MacLeod</h4>
-                    <p>Aequum AI</p>
-                </div>
-                <div class="member-card">
-                    <h4>Karen Kusuma</h4>
-                    <p>Harrison.ai</p>
-                </div>
-                <div class="member-card">
-                    <h4>Kevin Hou</h4>
-                    <p>Fault Line AI</p>
-                </div>
-                <div class="member-card">
-                    <h4>Harry Wu</h4>
-                    <p>MARS Research Fellow</p>
-                </div>
-                <div class="member-card">
-                    <h4>Jaymari Chua</h4>
-                    <p>Deloitte</p>
-                </div>
-                <div class="member-card">
-                    <h4>Angelica Chowdhury</h4>
-                    <p>Lumi</p>
-                </div>
-                <div class="member-card">
-                    <h4>Carlee Potter</h4>
-                    <p>Independent</p>
-                </div>
-                <div class="member-card">
-                    <h4>Rebecca Hawkins</h4>
-                    <p>Independent</p>
-                </div>
-                <div class="member-card">
-                    <h4>Luke Freeman</h4>
-                    <p>Good Ancestors</p>
-                </div>
-                <div class="member-card">
-                    <h4>Vanessa Huang</h4>
-                    <p>Student</p>
-                </div>
-            </div>
-        </div>
-    </section>
-    
     <section id="contact" class="container">
         <div class="content">
             <h3>Contact</h3>
             <p>Interested in visiting or have questions? Get in touch:</p>
-            <ul>
-                <li>Email: <a href="mailto:hunter@hunterjay.com">hunter@hunterjay.com</a></li>
-                <li>Phone: <a href="tel:+61422420037">+61 422 420 037</a></li>
-            </ul>
+            <div class="contact-layout">
+                <div class="contact-details">
+                    <p class="contact-detail"><span>Email</span><a href="mailto:hunter@hunterjay.com">hunter@hunterjay.com</a></p>
+                    <p class="contact-detail"><span>Phone</span><a href="tel:+61422420037">+61 422 420 037</a></p>
+                    <p class="contact-note">Planning a visit? Tell us roughly when you would like to come and we will look out for you on the day.</p>
+                </div>
+
+            <form class="contact-form" action="https://formspree.io/f/mqpklork" method="POST">
+                <label for="cf-name">Name</label>
+                <input id="cf-name" type="text" name="name" autocomplete="name" required>
+
+                <label for="cf-email">Email</label>
+                <input id="cf-email" type="email" name="email" autocomplete="email" required>
+
+                <label for="cf-message">Message</label>
+                <textarea id="cf-message" name="message" rows="5" placeholder="Hi, I am Sam - I would like to drop by on Tuesday around 10am." required></textarea>
+
+                <input type="hidden" name="_subject" value="Sydney AI Safety Space - website enquiry">
+                <p class="cf-hp" aria-hidden="true"><label for="cf-hp">Leave this field empty</label><input id="cf-hp" type="text" name="_gotcha" tabindex="-1" autocomplete="off"></p>
+
+                <button type="submit">Send message</button>
+                <p class="form-status" role="status" aria-live="polite" hidden></p>
+            </form>
+            </div>
+
+            <script>
+            // Submit in the background so visitors stay on this page. Without
+            // this, Formspree redirects to its own thank-you page, and the
+            // custom redirect option is not on the free plan. If JavaScript
+            // is unavailable the form still posts normally.
+            (function () {
+                var form = document.querySelector('.contact-form');
+                if (!form || !window.fetch) return;
+                var status = form.querySelector('.form-status');
+                var button = form.querySelector('button[type="submit"]');
+                form.addEventListener('submit', function (e) {
+                    e.preventDefault();
+                    button.disabled = true;
+                    status.hidden = false;
+                    status.className = 'form-status';
+                    status.textContent = 'Sending...';
+                    fetch(form.action, {
+                        method: 'POST',
+                        body: new FormData(form),
+                        headers: { 'Accept': 'application/json' }
+                    }).then(function (res) {
+                        if (res.ok) {
+                            form.reset();
+                            status.className = 'form-status form-status-ok';
+                            status.innerHTML = 'Thanks - we will be in touch soon. If you have not heard back within a week, please <a href="mailto:hunter@hunterjay.com">email us</a> directly.';
+                            return;
+                        }
+                        // Formspree normally answers with JSON, but a rate-limit
+                        // or outage page may not be. Fall back to a generic message.
+                        return res.json().catch(function () { return {}; }).then(function (data) {
+                            var msg = (data.errors || []).map(function (x) { return x.message; }).join(', ');
+                            throw new Error(msg || 'Something went wrong (error ' + res.status + ').');
+                        });
+                    }).catch(function (err) {
+                        status.className = 'form-status form-status-error';
+                        status.textContent = err.message.replace(/\.?$/, '.') + ' You can also email us directly.';
+                    }).then(function () {
+                        button.disabled = false;
+                    });
+                });
+            })();
+            </script>
         </div>
     </section>
-
 
     <section id="location" class="container">
         <div class="content">
@@ -275,12 +236,5 @@
         </div>
     </section>
 
-    <section id="community-photo-footer" class="container">
-        <div class="content" style="max-width: 100%; width: 100%;">
-            <div class="photo-placeholder">
-                <img src="static/sass_3.jpg" alt="Sydney AI Safety Space Community" style="width: 100%; height: auto; border-radius: 8px;">
-            </div>
-        </div>
-    </section>
 </body>
 </html>

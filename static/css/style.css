@@ -6,6 +6,12 @@
     --border-color: #333333;
 }
 
+html {
+    /* always reserve the scrollbar gutter, so short pages do not shift
+       the centred column sideways relative to long ones */
+    scrollbar-gutter: stable;
+}
+
 body {
     background-color: var(--bg-color);
     color: var(--text-color);
@@ -31,11 +37,6 @@ h1, h2, h3 {
     text-align: center;
 }
 
-header {
-    text-align: center;
-    margin-bottom: 30px;
-}
-
 .container {
     display: flex;
     flex-direction: row;
@@ -48,17 +49,6 @@ header {
     flex: 1;
     order: 1;
     margin-top: -10px;
-}
-
-
-#social-links ul {
-    list-style-type: none;
-    padding: 0;
-}
-
-#social-links li {
-    display: inline-block;
-    margin-right: 1rem;
 }
 
 /* Members Grid */
@@ -77,15 +67,6 @@ header {
     background-color: rgba(255, 255, 255, 0.02);
 }
 
-.member-photo {
-    width: 120px;
-    height: 120px;
-    border-radius: 50%;
-    object-fit: cover;
-    margin-bottom: 1rem;
-    border: 2px solid var(--border-color);
-}
-
 .member-card h4 {
     margin: 0 0 0.25rem 0;
     font-size: 1.1rem;
@@ -98,6 +79,189 @@ header {
 }
 
 
+/* Contact: form on the left, details filling the space beside it */
+.contact-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+    gap: 2.5rem;
+    align-items: start;
+    margin-top: 1.25rem;
+}
+
+.contact-details {
+    grid-column: 2;
+    grid-row: 1;
+}
+
+.contact-detail {
+    margin: 0 0 1rem 0;
+}
+
+.contact-detail span {
+    display: block;
+    color: #999;
+    font-size: 0.8rem;
+    margin-bottom: 0.1rem;
+}
+
+.contact-note {
+    margin-top: 1.5rem;
+    color: #999;
+    font-size: 0.85rem;
+    line-height: 1.6;
+}
+
+.contact-form ::placeholder {
+    color: #666;
+}
+
+/* Contact Form */
+.contact-form {
+    grid-column: 1;
+    grid-row: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    margin-top: 1rem;
+}
+
+.contact-form label {
+    font-size: 0.85rem;
+    color: #999;
+}
+
+.contact-form input,
+.contact-form textarea {
+    font-family: inherit;
+    font-size: 0.9rem;
+    color: var(--text-color);
+    background-color: rgba(255, 255, 255, 0.02);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 0.5rem 0.6rem;
+    margin-bottom: 0.75rem;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.contact-form textarea {
+    resize: vertical;
+    min-height: 6rem;
+}
+
+.contact-form input:focus,
+.contact-form textarea:focus {
+    outline: none;
+    border-color: var(--link-color);
+}
+
+.contact-form button {
+    align-self: flex-start;
+    font-family: inherit;
+    font-size: 0.9rem;
+    color: var(--text-color);
+    background-color: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 0.5rem 1.1rem;
+    cursor: pointer;
+}
+
+.contact-form button:hover {
+    border-color: var(--link-color);
+    color: var(--link-color);
+}
+
+.form-status {
+    margin-top: 0.75rem;
+    font-size: 0.9rem;
+    color: #999;
+}
+
+.form-status-ok {
+    color: var(--link-color);
+}
+
+.form-status-error {
+    color: #ff9d9d;
+}
+
+/* Honeypot: hidden from people, visible to bots */
+.cf-hp {
+    position: absolute;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+}
+
+/* Photo gallery: one large image with two stacked beside it */
+.gallery {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 0.5rem;
+    aspect-ratio: 16 / 9;
+}
+
+.gallery img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.gallery img:first-child {
+    grid-row: 1 / 3;
+}
+
+.photo-pair {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+}
+
+.photo-pair img {
+    display: block;
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.section-photo {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+}
+
+/* Member cards: names link with a persistent underline so they are
+   discoverable, organisations stay muted with hover only */
+.member-card h4 a {
+    color: inherit;
+    text-decoration: underline;
+    text-decoration-color: #555;
+    text-underline-offset: 3px;
+}
+
+.member-card h4 a:hover,
+.member-card h4 a:focus-visible {
+    text-decoration-color: var(--text-color);
+}
+
+.member-card p a {
+    color: inherit;
+    text-decoration: none;
+}
+
+.member-card p a:hover,
+.member-card p a:focus-visible {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
 /* Map Container */
 .map-container {
     margin-top: 1rem;
@@ -109,20 +273,19 @@ section {
     margin-bottom: 3rem;
 }
 
+h2 {
+    font-size: 1.65em;
+}
+
 h3 {
     margin-bottom: 1rem;
-    font-size: 1.4rem;
+    font-size: 1.25rem;
 }
 
 h4 {
     margin-top: 2rem;
     margin-bottom: 1rem;
     font-size: 1.2rem;
-    text-align: center;
-}
-
-h5 {
-    font-size: 1rem;
     text-align: center;
 }
 
@@ -134,10 +297,13 @@ ul {
 /* Supporters Section */
 .supporters-list {
     margin-top: 1.5rem;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
 }
 
 .supporter-item {
-    margin-bottom: 2rem;
+    margin-bottom: 0;
     padding: 1rem;
     border: 1px solid var(--border-color);
     border-radius: 8px;
@@ -183,6 +349,263 @@ ul {
     line-height: 1.6;
 }
 
+/* Site title with logo mark */
+.site-title {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.site-logo {
+    height: 1.6em;
+    width: auto;
+    flex-shrink: 0;
+}
+
+/* Site Navigation */
+.site-nav {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 2rem;
+    padding-bottom: 0.75rem;
+    margin-bottom: 2.5rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.site-nav a {
+    color: #8c8c8c;
+    font-size: 1rem;
+    padding-bottom: 0.35rem;
+    border-bottom: 2px solid transparent;
+    transition: color 0.15s ease;
+}
+
+.site-nav a:hover {
+    color: var(--text-color);
+    text-decoration: none;
+    border-bottom-color: var(--border-color);
+}
+
+.site-nav a[aria-current="page"] {
+    color: var(--link-color);
+    border-bottom-color: var(--link-color);
+}
+
+/* Monday Meals and Friday Discussions read as a pair */
+#lunches {
+    margin-bottom: 0.5rem;
+}
+
+.next-event {
+    color: #999;
+    font-size: 0.9rem;
+    margin-top: -0.25rem;
+    text-align: center;
+}
+
+/* Event Embed */
+.event-embed {
+    margin-top: 1.5rem;
+    margin-bottom: 2rem;
+    width: 100%;
+}
+
+.event-embed iframe {
+    width: 100%;
+    height: 430px;
+    display: block;
+}
+
+.no-events {
+    color: #999;
+    text-align: center;
+}
+
+.embed-fallback {
+    color: #999;
+    font-size: 0.85rem;
+    margin-top: 0.5rem;
+}
+
+/* Past Discussions heading sits quieter than the live sections */
+#past-discussions h3 {
+    color: #999;
+}
+
+.work-group {
+    margin: 3rem 0 0 0;
+    font-style: italic;
+    padding-bottom: 0.5rem;
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--header-color);
+    text-align: left;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.work-group:first-of-type {
+    margin-top: 2.5rem;
+}
+
+.work-group + .work-list {
+    margin-top: 0.25rem;
+}
+
+/* Past Discussions */
+.discussion-list,
+.work-list {
+    margin-top: 1.5rem;
+}
+
+.discussion-item,
+.work-item {
+    display: grid;
+    grid-template-columns: 7.5rem 1fr;
+    column-gap: 1.5rem;
+}
+
+.discussion-item {
+    margin-bottom: 2rem;
+}
+
+/* only work entries get the padded, hoverable block */
+.work-item {
+    position: relative;
+    overflow: hidden;
+    padding: 1rem 1rem 0.85rem 1rem;
+    margin: 0 -1rem;
+    border-radius: 8px;
+    transition: background-color 0.15s ease;
+}
+
+.work-item:hover {
+    background-color: rgba(255, 255, 255, 0.045);
+}
+
+.work-item:not(:last-child) {
+    border-bottom: 1px solid var(--border-color);
+}
+
+/* everything except the date sits in the right-hand column */
+.discussion-item > :not(.discussion-date),
+.work-item > :not(.work-date) {
+    grid-column: 2;
+}
+
+.discussion-item h4,
+.work-item h4 {
+    margin: 0 0 0.15rem 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+    line-height: 1.35;
+    text-align: left;
+}
+
+.discussion-item h4 a,
+.work-item h4 a {
+    color: inherit;
+    text-decoration: none;
+}
+
+.discussion-item h4 a:hover,
+.discussion-item h4 a:focus-visible,
+.work-item h4 a:hover,
+.work-item h4 a:focus-visible {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+.discussion-item p,
+.work-item p {
+    margin: 0.2rem 0;
+    line-height: 1.6;
+}
+
+.discussion-date,
+.work-date {
+    grid-column: 1;
+    grid-row: 1;
+    margin: 0;
+    padding-top: 0.15rem;
+    color: #999;
+    font-size: 0.85rem;
+    line-height: 1.4;
+}
+
+.discussion-source,
+.work-source {
+    color: #999;
+    font-size: 0.9rem;
+}
+
+.entry-desc {
+    margin-top: 0.55rem;
+    max-width: 82ch;
+    line-height: 1.75;
+    color: #c9c9c9;
+}
+
+/* Optional: a faint preview image revealed on hover, masked away from the text */
+.work-item[style*='--entry-shot']::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: var(--entry-shot);
+    background-size: cover;
+    background-position: right center;
+    opacity: 0;
+    transition: opacity 0.25s ease;
+    pointer-events: none;
+    -webkit-mask-image: linear-gradient(to left, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 25%, rgba(0,0,0,0) 55%);
+    mask-image: linear-gradient(to left, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 25%, rgba(0,0,0,0) 55%);
+}
+
+.work-item[style*='--entry-shot']:hover::before {
+    /* light screenshots read at a lower opacity than dark ones;
+       override per entry with --entry-shot-opacity */
+    opacity: var(--entry-shot-opacity, 0.28);
+}
+
+/* Member Organisations */
+.org-list {
+    list-style: none;
+    padding: 0;
+    margin: 1.25rem 0 1rem 0;
+    text-align: center;
+    line-height: 2;
+}
+
+.org-list li {
+    display: inline-block;
+    font-size: 0.95rem;
+    white-space: nowrap;
+}
+
+.org-list a {
+    color: inherit;
+    text-decoration: none;
+}
+
+.org-list a:hover,
+.org-list a:focus-visible {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+.org-list li:not(:last-child)::after {
+    content: "\00b7";
+    color: #555;
+    padding: 0 0.55rem;
+}
+
+.org-footnote {
+    text-align: center;
+    color: #999;
+    font-size: 0.85rem;
+}
+
 /* For narrow screens, adjust sizes but maintain layout */
 @media (max-width: 640px) {
     .container {
@@ -203,7 +626,7 @@ ul {
     }
 
     h2 {
-        font-size: 1.25rem;
+        font-size: 1.375rem;
     }
 
     h3 {
@@ -212,5 +635,66 @@ ul {
 
     .members-grid {
         grid-template-columns: 1fr;
+    }
+
+    .supporters-list {
+        grid-template-columns: 1fr;
+    }
+
+    .photo-pair {
+        grid-template-columns: 1fr;
+    }
+
+    .contact-layout {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+
+    .contact-form,
+    .contact-details {
+        grid-column: auto;
+        grid-row: auto;
+    }
+
+    .gallery {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto;
+        aspect-ratio: auto;
+    }
+
+    .gallery img:first-child {
+        grid-row: auto;
+    }
+
+    .gallery img {
+        height: auto;
+    }
+
+    .site-nav {
+        gap: 1.25rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .site-nav a {
+        font-size: 0.9rem;
+    }
+
+    .discussion-item,
+    .work-item {
+        display: block;
+        padding-left: 0;
+        padding-right: 0;
+        margin-left: 0;
+        margin-right: 0;
+    }
+
+    .discussion-date,
+    .work-date {
+        margin-bottom: 0.2rem;
+        padding-top: 0;
+    }
+
+    .event-embed iframe {
+        height: 740px;
     }
 }
