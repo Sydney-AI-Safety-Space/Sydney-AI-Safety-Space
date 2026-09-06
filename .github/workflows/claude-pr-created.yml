@@ -1,0 +1,141 @@
+name: Claude PR Checks
+
+# Reviews every newly opened PR and posts the review as a comment. Ported
+# from the Integuide mono repo's claude-pr-created.yml (2026-09), minus the
+# parts that only make sense there: the deploy-PR quick scan (this site has
+# no staging/production split) and the follow-up job for agent-authored PRs.
+#
+# Loop safety: triggers on opened/reopened only, never on synchronize, so a
+# push to the PR branch does not re-run the review. To re-run, re-run the job
+# from the Actions tab.
+
+on:
+  pull_request:
+    types: [opened, reopened]
+
+jobs:
+  claude-auto-review:
+    name: Claude Auto Review
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: write
+      id-token: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0  # Full history needed to diff against base branch
+
+      - name: Inspect PR
+        id: pr-info
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          # Start-of-run marker for the verify step below (github context has
+          # no run_started_at; an empty comparand would make the check vacuous).
+          echo "started=$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> "$GITHUB_OUTPUT"
+          # claude-code-action refuses to review PRs that modify workflow
+          # files (prompt-injection safeguard), so no comment will be posted
+          # on those and the verify step below must not fail them. Ask the
+          # API for the PR's file list rather than diffing locally.
+          if gh api --paginate "repos/${GITHUB_REPOSITORY}/pulls/${PR_NUMBER}/files" \
+              --jq '.[].filename' | grep -q '^\.github/workflows/'; then
+            echo "workflows_modified=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "workflows_modified=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      # Opus 5: per-PR volume here is tiny, so the stronger reviewer costs
+      # next to nothing. show_full_output is deliberately left off — this is
+      # a public repo and the transcript would be world-readable in the
+      # Actions log; the verify step below catches silent no-op runs instead.
+      - name: Claude Auto Review
+        uses: anthropics/claude-code-action@v1
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          claude_args: '--model claude-opus-5 --allowedTools "Read,Grep,Glob,Bash(gh pr view:*),Bash(gh pr diff:*),Bash(gh pr list:*),Bash(gh pr comment:*),Bash(git log:*),Bash(git show:*),Bash(git diff:*)"'
+          use_sticky_comment: true
+          prompt: |
+            Please review pull request #${{ github.event.pull_request.number }}
+            in this repository. Review that PR and no other — do not ask which
+            PR is meant; there is no one to answer.
+
+            This is a small static site: plain HTML pages, one stylesheet, a
+            few inline scripts, no build step. It is deployed as-is to
+            sydneyaisafetyspace.com.
+
+            You have a full checkout of the repository, not just the diff. Use it:
+            read the changed files in full, read the code around each change, and
+            check how the change interacts with the rest of the site (shared
+            CSS classes used on other pages, links between pages, image paths,
+            the README's instructions) so you judge the change's real effects —
+            not just its text. Reviewer tokens are cheap; an extra file read that
+            could confirm or rule out a problem is always worth it.
+
+            Scale the length of your write-up to the size and risk of the diff: a
+            small, focused change still gets a short, focused review — don't pad it
+            with boilerplate observations. But keep the investigation deep even when
+            the write-up is short.
+
+            Focus on:
+            - Potential bugs, especially on pages that are NOT in the diff but
+              share the stylesheet or link to what changed
+            - Broken links, wrong image paths, invalid HTML, layout at phone widths
+            - The actual effects of the change: what do visitors see differently
+              once this ships? Does the implementation match the PR's stated intent?
+            - Edge cases and error paths in any script (forms, date logic)
+            - Accessibility: alt text, labels, contrast, keyboard use
+            - Performance: image sizes, external requests
+            - Security: inline scripts, third-party iframes, external links
+            - Documentation updates (README, CLAUDE.md) if needed
+
+            IMPORTANT: You MUST post your review as a comment on the PR using `gh pr comment`.
+            Use `gh pr comment ${{ github.event.pull_request.number }} --body "your review"` to post your feedback.
+            Do NOT just output text - you must use the gh command to post the comment.
+
+      # The action can conclude "success" without the model ever posting its
+      # review (seen repeatedly on the other repos). A review job whose
+      # deliverable is a comment must fail when there is no comment: re-run
+      # the job to get the review. Sticky comments are UPDATED in place on
+      # re-runs, so match on updated_at, not created_at.
+      - name: Fail if no review comment was posted
+        if: steps.pr-info.outputs.workflows_modified != 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          RUN_STARTED: ${{ steps.pr-info.outputs.started }}
+        run: |
+          if [ -z "${RUN_STARTED}" ]; then
+            echo "::error::No start marker from the pr-info step — refusing a vacuous check."
+            exit 1
+          fi
+          POSTED=$(gh api "repos/${GITHUB_REPOSITORY}/issues/${PR_NUMBER}/comments?per_page=100" --paginate \
+            --jq "[.[] | select((.user.login | startswith(\"claude\")) and (.updated_at >= \"${RUN_STARTED}\"))] | length")
+          if [ "${POSTED}" -eq 0 ]; then
+            echo "::error::Claude review ran but posted no PR comment (silent no-op). Re-run this job to get the review."
+            exit 1
+          fi
+          echo "Review comment verified (${POSTED} posted/updated since ${RUN_STARTED})."
+
+      # A skipped verify step shows as neutral/grey — a workflow-touching PR
+      # would otherwise go green with zero automated review and nothing on the
+      # PR saying so. Say it out loud instead; the marker keeps re-runs from
+      # stacking duplicate comments.
+      - name: Note that the review was skipped (workflow-modifying PR)
+        if: steps.pr-info.outputs.workflows_modified == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          MARKER="<!-- claude-review-skipped-workflows -->"
+          if gh api --paginate "repos/${GITHUB_REPOSITORY}/issues/${PR_NUMBER}/comments?per_page=100" \
+              --jq '.[].body' | grep -qF "$MARKER"; then
+            echo "Skip notice already posted."
+            exit 0
+          fi
+          gh pr comment "$PR_NUMBER" --body "$MARKER
+          ⚠️ **Claude Auto Review skipped**: this PR modifies workflow files, which claude-code-action refuses to review (prompt-injection safeguard). A green check here is NOT a review — review this PR manually."
