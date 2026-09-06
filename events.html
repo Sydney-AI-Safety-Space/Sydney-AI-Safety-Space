@@ -35,8 +35,13 @@
     <section id="upcoming" class="container">
         <div class="content">
             <h3>Upcoming Events</h3>
-            <p class="next-event">Next event: Thursday 10 September, 5:30pm at Broad Church.</p>
-            <div class="event-embed">
+            <!-- Each event carries its start and end time (Sydney time, with
+                 offset). The script below hides events once they have ended
+                 and fills in the "Next event" line from the earliest one left.
+                 See README for how to add an event. -->
+            <p class="next-event" hidden></p>
+            <p class="no-events" hidden>Nothing scheduled right now. Check back soon, or join us for Monday Meals.</p>
+            <div class="event-embed" data-start="2026-09-10T17:30:00+10:00" data-end="2026-09-10T19:30:00+10:00">
                 <iframe
                     src="https://luma.com/embed/event/2af5nsjg/simple"
                     title="Sydney Watch Party: Shaping Australia's AI Future - AI Safety ANZ panel"
@@ -49,7 +54,7 @@
                 <p class="embed-fallback">Not loading? <a href="https://luma.com/2af5nsjg" target="_blank" rel="noopener noreferrer">View the event on Luma</a>.</p>
             </div>
 
-            <div class="event-embed">
+            <div class="event-embed" data-start="2026-09-17T17:30:00+10:00" data-end="2026-09-17T19:30:00+10:00">
                 <iframe
                     src="https://luma.com/embed/event/tk79mhe1/simple"
                     title="Sydney AI Safety and Governance Monthly Meetup - registration"
@@ -61,6 +66,38 @@
                 </iframe>
                 <p class="embed-fallback">Not loading? <a href="https://luma.com/tk79mhe1" target="_blank" rel="noopener noreferrer">View the event on Luma</a>.</p>
             </div>
+
+            <script>
+            // Hide events that have finished and announce the next one.
+            // Without JavaScript every embed stays visible and the line is
+            // simply absent, so nothing breaks.
+            (function () {
+                var now = new Date();
+                var embeds = Array.prototype.slice.call(document.querySelectorAll('.event-embed[data-start]'));
+                var upcoming = embeds.filter(function (el) {
+                    var end = new Date(el.getAttribute('data-end') || el.getAttribute('data-start'));
+                    if (isNaN(end)) return true; // unparseable date: leave it showing
+                    if (end < now) { el.hidden = true; return false; }
+                    return true;
+                });
+                var line = document.querySelector('.next-event');
+                var none = document.querySelector('.no-events');
+                if (!upcoming.length) {
+                    if (none) none.hidden = false;
+                    return;
+                }
+                var next = upcoming
+                    .map(function (el) { return { start: new Date(el.getAttribute('data-start')), venue: el.getAttribute('data-venue') || 'Broad Church' }; })
+                    .filter(function (ev) { return !isNaN(ev.start); })
+                    .sort(function (a, b) { return a.start - b.start; })[0];
+                if (!next || !line || !window.Intl) return;
+                var opts = { timeZone: 'Australia/Sydney' };
+                var day = new Intl.DateTimeFormat('en-AU', { weekday: 'long', day: 'numeric', month: 'long', timeZone: opts.timeZone }).format(next.start);
+                var time = new Intl.DateTimeFormat('en-AU', { hour: 'numeric', minute: '2-digit', timeZone: opts.timeZone }).format(next.start);
+                line.textContent = 'Next event: ' + day + ', ' + time + ' at ' + next.venue + '.';
+                line.hidden = false;
+            })();
+            </script>
         </div>
     </section>
 

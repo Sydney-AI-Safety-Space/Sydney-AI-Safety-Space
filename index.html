@@ -6,7 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sydney AI Safety Space</title>
     <link rel="stylesheet" href="static/css/style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <link rel="icon" href="static/favicon.ico" type="image/x-icon">
     <link rel="shortcut icon" href="static/favicon.ico" type="image/x-icon">
 </head>
@@ -33,26 +32,26 @@
     <section id="about" class="container">
         <div class="content">
             <p>The Sydney AI Safety Space is a volunteer run and donation-supported coworking space based at Broad Church, 3 Little Queen St, Chippendale.</p>
-            <p>We provide free office space for people working in the field of AI safety (including policy work, technical research, field building, personal study, or engineering projects).</p>
+            <p>We provide free office space for people working in or trying to enter the field of AI safety (including policy work, technical research, field building, personal study, or other projects).</p>
         </div>
     </section>
 
     <section id="community-photo" class="container">
         <div class="content" style="max-width: 100%; width: 100%;">
             <div class="gallery">
-                <img src="static/gallery-people.jpg" alt="Members coworking in the Sydney AI Safety Space" loading="lazy">
-                <img src="static/gallery-kitchen.jpg" alt="The communal kitchen and lounge at Broad Church" loading="lazy">
-                <img src="static/gallery-door.jpg" alt="The Broad Church building at 3 Little Queen St" loading="lazy">
+                <img src="static/gallery-people.jpg" alt="Members coworking in the Sydney AI Safety Space">
+                <img src="static/gallery-kitchen.jpg" alt="The communal kitchen and lounge at Broad Church">
+                <img src="static/gallery-door.jpg" alt="The Broad Church building at 3 Little Queen St">
             </div>
         </div>
     </section>
 
     <section id="visit" class="container">
         <div class="content">
-            <h3>Visit Us!</h3>
-            <p>Come cowork with us for free! Anyone interested in AI safety can drop by as a guest, for lunch or a day of coworking. You're welcome to keep coming back as often as you like. Just <a href="mailto:hunter@hunterjay.com">email us</a> or fill in the <a href="#contact">contact form</a> below to let us know you're coming, and we'll add you to the Slack (shared with Australian EAs) to introduce yourself to the community.</p>
+            <h3>Visit Us</h3>
+            <p>Come cowork with us for free! Anyone interested in AI safety can drop by as a guest, for lunch, or for regular coworking. You're welcome to keep coming back as often as you like. Just <a href="mailto:hunter@hunterjay.com">email us</a> or fill in the <a href="#contact">contact form</a> below to let us know you're coming, and we'll add you to the Slack (shared with Australian EAs) to introduce yourself to the community.</p>
 
-            <p>When you arrive, push open the door (or knock if it's locked), and come up the stairs to the coworking area!</p>
+            <p>When you arrive, push open the door (or buzz if it's locked), and come up the stairs to the coworking area.</p>
 
             <p>Our space operates on a hot desking model, with an average occupancy of around five members:</p>
             <ul>
@@ -98,12 +97,11 @@
                 <label for="cf-name">Name</label>
                 <input id="cf-name" type="text" name="name" autocomplete="name" required>
 
-                <label for="cf-email">Your email</label>
+                <label for="cf-email">Email</label>
                 <input id="cf-email" type="email" name="email" autocomplete="email" required>
 
-                <label for="cf-message">What would you like to tell us?</label>
-                <p class="field-hint" id="cf-message-hint">Visiting? A day and rough time is all we need. Anything else is welcome too.</p>
-                <textarea id="cf-message" name="message" rows="5" aria-describedby="cf-message-hint" placeholder="Hi, I am Sam - I would like to drop by on Tuesday around 10am." required></textarea>
+                <label for="cf-message">Message</label>
+                <textarea id="cf-message" name="message" rows="5" placeholder="Hi, I am Sam - I would like to drop by on Tuesday around 10am." required></textarea>
 
                 <input type="hidden" name="_subject" value="Sydney AI Safety Space - website enquiry">
                 <p class="cf-hp" aria-hidden="true"><label for="cf-hp">Leave this field empty</label><input id="cf-hp" type="text" name="_gotcha" tabindex="-1" autocomplete="off"></p>
@@ -140,13 +138,15 @@
                             status.innerHTML = 'Thanks - we will be in touch soon. If you have not heard back within a week, please <a href="mailto:hunter@hunterjay.com">email us</a> directly.';
                             return;
                         }
-                        return res.json().then(function (data) {
+                        // Formspree normally answers with JSON, but a rate-limit
+                        // or outage page may not be. Fall back to a generic message.
+                        return res.json().catch(function () { return {}; }).then(function (data) {
                             var msg = (data.errors || []).map(function (x) { return x.message; }).join(', ');
-                            throw new Error(msg || 'Something went wrong.');
+                            throw new Error(msg || 'Something went wrong (error ' + res.status + ').');
                         });
                     }).catch(function (err) {
                         status.className = 'form-status form-status-error';
-                        status.textContent = err.message + ' You can also email us directly.';
+                        status.textContent = err.message.replace(/\.?$/, '.') + ' You can also email us directly.';
                     }).then(function () {
                         button.disabled = false;
                     });
