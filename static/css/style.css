@@ -429,7 +429,8 @@ ul {
     margin-top: 0.5rem;
 }
 
-/* Past Discussions heading sits quieter than the live sections */
+/* Archive headings sit quieter than the live sections */
+#past-events h3,
 #past-discussions h3 {
     color: #999;
 }
