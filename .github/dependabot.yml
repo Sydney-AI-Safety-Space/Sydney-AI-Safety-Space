@@ -1,0 +1,17 @@
+# Keeps the GitHub Actions this repo uses current (the site itself is static,
+# with no package dependencies). Monthly, grouped, nothing released in the
+# last 7 days. Security alerts are switched on in the repo settings.
+# Dependabot PRs get no repo secrets, so the Claude review skips them.
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
+      time: "07:00"
+      timezone: Australia/Sydney
+    cooldown:
+      default-days: 7
+    groups:
+      actions:
+        patterns: ["*"]
