@@ -2,6 +2,12 @@
 # with no package dependencies). Monthly, grouped, nothing released in the
 # last 7 days. Security alerts are switched on in the repo settings.
 # Dependabot PRs get no repo secrets, so the Claude review skips them.
+#
+# Actions are pinned to a commit sha (`@<sha> # vX.Y.Z`), which this config keeps
+# current, because a tag can be moved to other code and would run with no PR
+# at all; the review job holds a write token and the Claude secret. The one
+# exception is anthropics/claude-code-action@v1, kept on its tag on purpose
+# (2026-10-26): the newest Claude Code each run. Pin any new action the same way.
 version: 2
 updates:
   - package-ecosystem: github-actions
