@@ -51,19 +51,20 @@ jobs:
             echo "workflows_modified=false" >> "$GITHUB_OUTPUT"
           fi
 
-      # The newest Opus at high effort: per-PR volume here is tiny, so the
-      # strongest reviewer costs next to nothing. `opus` is Claude Code's alias
-      # for its newest Opus (Opus 5.5 on 2026-10-31), and @v1 installs the newest
-      # Claude Code each run, so this tracks new models with no PR; an alias can't
-      # get ahead of the CLI the way a pinned id can. High effort because Opus 5.5
-      # defaults to medium. show_full_output is deliberately left off: this is
-      # a public repo and the transcript would be world-readable in the
-      # Actions log; the verify step below catches silent no-op runs instead.
+      # The newest Fable at high effort: per-PR volume here is tiny, so the
+      # strongest reviewer costs next to nothing. `fable` is Claude Code's alias
+      # for its newest Fable (Fable 5.2 on 2026-11-10), and @v1 installs the
+      # newest Claude Code each run, so this tracks new models with no PR; an
+      # alias can't get ahead of the CLI the way a pinned id can. High effort
+      # because Claude Code runs Fable 5.2 at medium by default.
+      # show_full_output is deliberately left off: this is a public repo and
+      # the transcript would be world-readable in the Actions log; the verify
+      # step below catches silent no-op runs instead.
       - name: Claude Auto Review
         uses: anthropics/claude-code-action@v1
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
-          claude_args: '--model opus --effort high --allowedTools "Read,Grep,Glob,Bash(gh pr view:*),Bash(gh pr diff:*),Bash(gh pr list:*),Bash(gh pr comment:*),Bash(git log:*),Bash(git show:*),Bash(git diff:*)"'
+          claude_args: '--model fable --effort high --allowedTools "Read,Grep,Glob,Bash(gh pr view:*),Bash(gh pr diff:*),Bash(gh pr list:*),Bash(gh pr comment:*),Bash(git log:*),Bash(git show:*),Bash(git diff:*)"'
           use_sticky_comment: true
           prompt: |
             Please review pull request #${{ github.event.pull_request.number }}
