@@ -129,6 +129,8 @@
                 var status = form.querySelector('.form-status');
                 var button = form.querySelector('button[type="submit"]');
                 var honeypot = form.querySelector('[name="_honey"]');
+                var subject = form.querySelector('[name="_subject"]');
+                var baseSubject = subject.value;
                 // FormSubmit's JSON endpoint is the same address under /ajax/.
                 var endpoint = form.action.replace('formsubmit.co/', 'formsubmit.co/ajax/');
                 function thanks() {
@@ -143,6 +145,9 @@
                     // on the /ajax/ endpoint, so drop those here and look
                     // successful.
                     if (honeypot.value) { thanks(); return; }
+                    // Name the sender in the subject so each enquiry is its
+                    // own email thread, not one long conversation.
+                    subject.value = baseSubject + ' from ' + form.querySelector('[name="name"]').value.trim();
                     button.disabled = true;
                     status.className = 'form-status';
                     status.textContent = 'Sending...';
