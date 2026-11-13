@@ -110,7 +110,6 @@
 
                 <input type="hidden" name="_subject" value="Sydney AI Safety Space - website enquiry">
                 <input type="hidden" name="_template" value="table">
-                <input type="hidden" name="_next" value="https://sydneyaisafetyspace.org/#contact">
                 <p class="cf-hp" aria-hidden="true"><label for="cf-hp">Leave this field empty</label><input id="cf-hp" type="text" name="_honey" tabindex="-1" autocomplete="off"></p>
 
                 <button type="submit">Send message</button>
@@ -121,8 +120,7 @@
             <script>
             // Submit in the background so visitors stay on this page. If
             // JavaScript is unavailable the form still posts normally:
-            // FormSubmit shows its captcha page, then sends the visitor
-            // back here (_next).
+            // FormSubmit shows its captcha page, then its thank-you page.
             (function () {
                 var form = document.querySelector('.contact-form');
                 if (!form || !window.fetch) return;
@@ -138,13 +136,18 @@
                     status.className = 'form-status form-status-ok';
                     status.innerHTML = 'Thanks - we will be in touch soon. If you have not heard back within a week, please <a href="mailto:hunter@hunterjay.com">email us</a> directly.';
                 }
+                function failed() {
+                    status.className = 'form-status form-status-error';
+                    status.innerHTML = 'Sorry, your message could not be sent. Please <a href="mailto:hunter@hunterjay.com">email us</a> directly instead.';
+                }
                 form.addEventListener('submit', function (e) {
                     e.preventDefault();
                     status.hidden = false;
-                    // Only bots fill the hidden field. FormSubmit ignores it
-                    // on the /ajax/ endpoint, so drop those here and look
-                    // successful.
-                    if (honeypot.value) { thanks(); return; }
+                    // Only bots should fill the hidden field, and FormSubmit
+                    // ignores it on the /ajax/ endpoint, so stop those here.
+                    // Say it failed: if autofill ever filled the field, a
+                    // real visitor must not be told the message was sent.
+                    if (honeypot.value) { failed(); return; }
                     // Name the sender in the subject so each enquiry is its
                     // own email thread, not one long conversation.
                     subject.value = baseSubject + ' from ' + form.querySelector('[name="name"]').value.trim();
@@ -158,17 +161,15 @@
                     }).then(function (res) {
                         // FormSubmit answers 200 even when it rejects a
                         // submission: the verdict is "success" in the JSON
-                        // body. An outage page may not be JSON at all.
-                        return res.json().catch(function () { return {}; }).then(function (data) {
-                            if (!res.ok || String(data.success) !== 'true') {
-                                throw new Error('Sorry, your message could not be sent' + (res.ok ? '' : ' (error ' + res.status + ')'));
+                        // body. An outage page is not JSON, so json() rejects.
+                        return res.json().then(function (data) {
+                            if (!res.ok || !data || String(data.success) !== 'true') {
+                                throw new Error('FormSubmit rejected the submission');
                             }
                             thanks();
                         });
-                    }).catch(function (err) {
-                        status.className = 'form-status form-status-error';
-                        status.textContent = err.message.replace(/\.?$/, '.') + ' You can also email us directly.';
-                    }).then(function () {
+                    }).catch(failed)
+                    .then(function () {
                         button.disabled = false;
                     });
                 });
