@@ -94,10 +94,10 @@
                 </div>
 
             <!-- FormSubmit (formsubmit.co) emails each submission to the address
-                 in this URL. There is no account or dashboard. To change who
-                 receives them, change the address here; FormSubmit then emails
-                 the new address an activation link on the first submission.
-                 See "Contact Form" in CLAUDE.md. -->
+                 in this URL. There is no account or dashboard. The address is
+                 also in the status messages and mailto links on this page:
+                 to change who receives submissions, follow "Contact Form" in
+                 CLAUDE.md. -->
             <form class="contact-form" action="https://formsubmit.co/hunter@hunterjay.com" method="POST">
                 <label for="cf-name">Name</label>
                 <input id="cf-name" type="text" name="name" autocomplete="name" required>
@@ -136,7 +136,10 @@
                     status.className = 'form-status form-status-ok';
                     status.innerHTML = 'Thanks - we will be in touch soon. If you have not heard back within a week, please <a href="mailto:hunter@hunterjay.com">email us</a> directly.';
                 }
-                function failed() {
+                function failed(err) {
+                    // Nothing else records a failure, so leave a trace for
+                    // whoever looks into a "the form is broken" report.
+                    if (err) console.error('Contact form:', err);
                     status.className = 'form-status form-status-error';
                     status.innerHTML = 'Sorry, your message could not be sent. Please <a href="mailto:hunter@hunterjay.com">email us</a> directly instead.';
                 }
@@ -147,7 +150,7 @@
                     // ignores it on the /ajax/ endpoint, so stop those here.
                     // Say it failed: if autofill ever filled the field, a
                     // real visitor must not be told the message was sent.
-                    if (honeypot.value) { failed(); return; }
+                    if (honeypot.value) { failed(new Error('honeypot field was filled')); return; }
                     // Name the sender in the subject so each enquiry is its
                     // own email thread, not one long conversation.
                     subject.value = baseSubject + ' from ' + form.querySelector('[name="name"]').value.trim();

@@ -186,6 +186,12 @@ h1, h2, h3 {
     color: #ff9d9d;
 }
 
+/* The link is the visitor's fallback, so it must read as a link. In the
+   thanks message it is the same colour as the text around it. */
+.form-status a {
+    text-decoration: underline;
+}
+
 /* Honeypot: hidden from people, visible to bots */
 .cf-hp {
     position: absolute;
