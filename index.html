@@ -93,7 +93,12 @@
                     <p class="contact-note">Planning a visit? Tell us roughly when you would like to come and we will look out for you on the day.</p>
                 </div>
 
-            <form class="contact-form" action="https://formspree.io/f/mqpklork" method="POST">
+            <!-- FormSubmit (formsubmit.co) emails each submission to the address
+                 in this URL. There is no account or dashboard. The address is
+                 also in the status messages and mailto links on this page:
+                 to change who receives submissions, follow "Contact Form" in
+                 CLAUDE.md. -->
+            <form class="contact-form" action="https://formsubmit.co/hunter@hunterjay.com" method="POST">
                 <label for="cf-name">Name</label>
                 <input id="cf-name" type="text" name="name" autocomplete="name" required>
 
@@ -104,7 +109,8 @@
                 <textarea id="cf-message" name="message" rows="5" placeholder="Hi, I am Sam - I would like to drop by on Tuesday around 10am." required></textarea>
 
                 <input type="hidden" name="_subject" value="Sydney AI Safety Space - website enquiry">
-                <p class="cf-hp" aria-hidden="true"><label for="cf-hp">Leave this field empty</label><input id="cf-hp" type="text" name="_gotcha" tabindex="-1" autocomplete="off"></p>
+                <input type="hidden" name="_template" value="table">
+                <p class="cf-hp" aria-hidden="true"><label for="cf-hp">Leave this field empty</label><input id="cf-hp" type="text" name="_honey" tabindex="-1" autocomplete="off"></p>
 
                 <button type="submit">Send message</button>
                 <p class="form-status" role="status" aria-live="polite" hidden></p>
@@ -112,42 +118,61 @@
             </div>
 
             <script>
-            // Submit in the background so visitors stay on this page. Without
-            // this, Formspree redirects to its own thank-you page, and the
-            // custom redirect option is not on the free plan. If JavaScript
-            // is unavailable the form still posts normally.
+            // Submit in the background so visitors stay on this page. If
+            // JavaScript is unavailable the form still posts normally:
+            // FormSubmit shows its captcha page, then its thank-you page.
             (function () {
                 var form = document.querySelector('.contact-form');
                 if (!form || !window.fetch) return;
                 var status = form.querySelector('.form-status');
                 var button = form.querySelector('button[type="submit"]');
+                var honeypot = form.querySelector('[name="_honey"]');
+                var subject = form.querySelector('[name="_subject"]');
+                var baseSubject = subject.value;
+                // FormSubmit's JSON endpoint is the same address under /ajax/.
+                var endpoint = form.action.replace('formsubmit.co/', 'formsubmit.co/ajax/');
+                function thanks() {
+                    form.reset();
+                    status.className = 'form-status form-status-ok';
+                    status.innerHTML = 'Thanks - we will be in touch soon. If you have not heard back within a week, please <a href="mailto:hunter@hunterjay.com">email us</a> directly.';
+                }
+                function failed(err) {
+                    // Nothing else records a failure, so leave a trace for
+                    // whoever looks into a "the form is broken" report.
+                    if (err) console.error('Contact form:', err);
+                    status.className = 'form-status form-status-error';
+                    status.innerHTML = 'Sorry, your message could not be sent. Please <a href="mailto:hunter@hunterjay.com">email us</a> directly instead.';
+                }
                 form.addEventListener('submit', function (e) {
                     e.preventDefault();
-                    button.disabled = true;
                     status.hidden = false;
+                    // Only bots should fill the hidden field, and FormSubmit
+                    // ignores it on the /ajax/ endpoint, so stop those here.
+                    // Say it failed: if autofill ever filled the field, a
+                    // real visitor must not be told the message was sent.
+                    if (honeypot.value) { failed(new Error('honeypot field was filled')); return; }
+                    // Name the sender in the subject so each enquiry is its
+                    // own email thread, not one long conversation.
+                    subject.value = baseSubject + ' from ' + form.querySelector('[name="name"]').value.trim();
+                    button.disabled = true;
                     status.className = 'form-status';
                     status.textContent = 'Sending...';
-                    fetch(form.action, {
+                    fetch(endpoint, {
                         method: 'POST',
                         body: new FormData(form),
                         headers: { 'Accept': 'application/json' }
                     }).then(function (res) {
-                        if (res.ok) {
-                            form.reset();
-                            status.className = 'form-status form-status-ok';
-                            status.innerHTML = 'Thanks - we will be in touch soon. If you have not heard back within a week, please <a href="mailto:hunter@hunterjay.com">email us</a> directly.';
-                            return;
-                        }
-                        // Formspree normally answers with JSON, but a rate-limit
-                        // or outage page may not be. Fall back to a generic message.
-                        return res.json().catch(function () { return {}; }).then(function (data) {
-                            var msg = (data.errors || []).map(function (x) { return x.message; }).join(', ');
-                            throw new Error(msg || 'Something went wrong (error ' + res.status + ').');
+                        // FormSubmit answers 200 even when it rejects a
+                        // submission: the verdict is "success" in the JSON
+                        // body. An outage page is not JSON, so json() rejects.
+                        return res.json().then(function (data) {
+                            if (!res.ok || !data || String(data.success) !== 'true') {
+                                throw new Error('FormSubmit rejected the submission');
+                            }
+                            thanks();
                         });
-                    }).catch(function (err) {
-                        status.className = 'form-status form-status-error';
-                        status.textContent = err.message.replace(/\.?$/, '.') + ' You can also email us directly.';
-                    }).then(function () {
+                    }).catch(failed)
+                    .then(function () {
                         button.disabled = false;
                     });
                 });
