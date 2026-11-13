@@ -93,7 +93,12 @@
                     <p class="contact-note">Planning a visit? Tell us roughly when you would like to come and we will look out for you on the day.</p>
                 </div>
 
-            <form class="contact-form" action="https://formspree.io/f/mqpklork" method="POST">
+            <!-- FormSubmit (formsubmit.co) emails each submission to the address
+                 in this URL. There is no account or dashboard. To change who
+                 receives them, change the address here; FormSubmit then emails
+                 the new address an activation link on the first submission.
+                 See "Contact Form" in CLAUDE.md. -->
+            <form class="contact-form" action="https://formsubmit.co/hunter@hunterjay.com" method="POST">
                 <label for="cf-name">Name</label>
                 <input id="cf-name" type="text" name="name" autocomplete="name" required>
 
@@ -104,7 +109,9 @@
                 <textarea id="cf-message" name="message" rows="5" placeholder="Hi, I am Sam - I would like to drop by on Tuesday around 10am." required></textarea>
 
                 <input type="hidden" name="_subject" value="Sydney AI Safety Space - website enquiry">
-                <p class="cf-hp" aria-hidden="true"><label for="cf-hp">Leave this field empty</label><input id="cf-hp" type="text" name="_gotcha" tabindex="-1" autocomplete="off"></p>
+                <input type="hidden" name="_template" value="table">
+                <input type="hidden" name="_next" value="https://sydneyaisafetyspace.org/#contact">
+                <p class="cf-hp" aria-hidden="true"><label for="cf-hp">Leave this field empty</label><input id="cf-hp" type="text" name="_honey" tabindex="-1" autocomplete="off"></p>
 
                 <button type="submit">Send message</button>
                 <p class="form-status" role="status" aria-live="polite" hidden></p>
@@ -112,37 +119,46 @@
             </div>
 
             <script>
-            // Submit in the background so visitors stay on this page. Without
-            // this, Formspree redirects to its own thank-you page, and the
-            // custom redirect option is not on the free plan. If JavaScript
-            // is unavailable the form still posts normally.
+            // Submit in the background so visitors stay on this page. If
+            // JavaScript is unavailable the form still posts normally:
+            // FormSubmit shows its captcha page, then sends the visitor
+            // back here (_next).
             (function () {
                 var form = document.querySelector('.contact-form');
                 if (!form || !window.fetch) return;
                 var status = form.querySelector('.form-status');
                 var button = form.querySelector('button[type="submit"]');
+                var honeypot = form.querySelector('[name="_honey"]');
+                // FormSubmit's JSON endpoint is the same address under /ajax/.
+                var endpoint = form.action.replace('formsubmit.co/', 'formsubmit.co/ajax/');
+                function thanks() {
+                    form.reset();
+                    status.className = 'form-status form-status-ok';
+                    status.innerHTML = 'Thanks - we will be in touch soon. If you have not heard back within a week, please <a href="mailto:hunter@hunterjay.com">email us</a> directly.';
+                }
                 form.addEventListener('submit', function (e) {
                     e.preventDefault();
-                    button.disabled = true;
                     status.hidden = false;
+                    // Only bots fill the hidden field. FormSubmit ignores it
+                    // on the /ajax/ endpoint, so drop those here and look
+                    // successful.
+                    if (honeypot.value) { thanks(); return; }
+                    button.disabled = true;
                     status.className = 'form-status';
                     status.textContent = 'Sending...';
-                    fetch(form.action, {
+                    fetch(endpoint, {
                         method: 'POST',
                         body: new FormData(form),
                         headers: { 'Accept': 'application/json' }
                     }).then(function (res) {
-                        if (res.ok) {
-                            form.reset();
-                            status.className = 'form-status form-status-ok';
-                            status.innerHTML = 'Thanks - we will be in touch soon. If you have not heard back within a week, please <a href="mailto:hunter@hunterjay.com">email us</a> directly.';
-                            return;
-                        }
-                        // Formspree normally answers with JSON, but a rate-limit
-                        // or outage page may not be. Fall back to a generic message.
+                        // FormSubmit answers 200 even when it rejects a
+                        // submission: the verdict is "success" in the JSON
+                        // body. An outage page may not be JSON at all.
                         return res.json().catch(function () { return {}; }).then(function (data) {
-                            var msg = (data.errors || []).map(function (x) { return x.message; }).join(', ');
-                            throw new Error(msg || 'Something went wrong (error ' + res.status + ').');
+                            if (!res.ok || String(data.success) !== 'true') {
+                                throw new Error('Sorry, your message could not be sent' + (res.ok ? '' : ' (error ' + res.status + ')'));
+                            }
+                            thanks();
                         });
                     }).catch(function (err) {
                         status.className = 'form-status form-status-error';
