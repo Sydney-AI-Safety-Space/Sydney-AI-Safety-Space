@@ -49,8 +49,29 @@ emails each submission to the address in the form's `action` URL
   the page script checks that field itself. Without JavaScript the form posts
   to the plain URL, where FormSubmit shows a reCAPTCHA page and then its own
   thank-you page.
-- Nothing tells the recipient when FormSubmit starts rejecting submissions;
-  only visitors see the error. After changing the form, send a test.
+- A weekly GitHub Action (`.github/workflows/contact-form-check.yml`) sends a
+  test message through the live form and opens an issue, "Contact form check
+  failed", if FormSubmit does not accept it. The issue closes itself when the
+  check passes again. The check reads the form's address from the live page,
+  so it follows a change of recipient without being edited.
+  - Each passing run emails the recipient one message with "form health
+    check" in the subject. FormSubmit cannot accept a submission without
+    sending it (its `_blacklist` field, like `_honey`, is ignored on
+    `/ajax/`). If those emails stop, the check has stopped.
+  - GitHub switches off scheduled workflows in a public repository after 60
+    days without activity. The check opens a second issue at 45 days. Do not
+    add a job that commits to keep it alive; re-enable it from the Actions
+    tab if it stops.
+  - It checks that FormSubmit accepts a message, not that the email reaches
+    the inbox, and not the page script (use a browser for that).
+  - After changing the form, do not wait for Monday: run it by hand (Actions,
+    Contact Form Check, Run workflow).
+  - A PR that changes the check's own files also runs it once, so it sends
+    one of those emails off schedule. That includes Dependabot's.
+  - To test the alert: run the workflow by hand (Actions, Contact Form Check,
+    Run workflow) with `site_url` set to a page with no contact form, such as
+    `https://sydneyaisafetyspace.org/events.html`. Run it again with the
+    field empty to close the issue.
 - To test delivery without a browser (this emails the recipient):
   `curl -X POST https://formsubmit.co/ajax/hunter@hunterjay.com -H 'Accept: application/json' -H 'Referer: https://sydneyaisafetyspace.org/' -F name=Test -F email=a@b.co -F message=Test`
 
