@@ -21,7 +21,9 @@ fail() {
     exit 1
 }
 
+# Retried, so one blip in GitHub Pages does not raise a week-long alarm.
 page=$(curl --fail --silent --show-error --location --max-time 30 \
+    --retry 2 --retry-all-errors \
     --user-agent "$USER_AGENT" "$SITE_URL") ||
     fail "could not load $SITE_URL"
 
@@ -55,18 +57,20 @@ message="Automatic weekly check that the website contact form still delivers. No
 If these emails stop arriving, the check has stopped running: see Contact Form in CLAUDE.md.
 ${run_url:+Sent by $run_url}"
 
+# --form-string, not --form: --form gives ";" and a leading "@" or "<" a
+# special meaning, which would silently cut a message that contained them.
 answer=""
 for attempt in $(seq 1 "$ATTEMPTS"); do
     answer=$(curl --silent --show-error --max-time 30 \
         --user-agent "$USER_AGENT" \
         --header "Accept: application/json" \
         --header "Referer: $SITE_URL" \
-        --form "name=Form health check" \
-        --form "email=no-reply@sydneyaisafetyspace.org" \
-        --form "message=$message" \
-        --form "_subject=Sydney AI Safety Space - form health check (automatic)" \
-        --form "_template=table" \
-        --form "_honey=" \
+        --form-string "name=Form health check" \
+        --form-string "email=no-reply@sydneyaisafetyspace.org" \
+        --form-string "message=$message" \
+        --form-string "_subject=Sydney AI Safety Space - form health check (automatic)" \
+        --form-string "_template=table" \
+        --form-string "_honey=" \
         "$endpoint" 2>&1) || true
     # FormSubmit answers HTTP 200 even when it rejects a submission; the
     # verdict is "success" in the JSON body.

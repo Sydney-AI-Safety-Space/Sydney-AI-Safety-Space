@@ -18,8 +18,11 @@ IDLE_WARN_DAYS=45
 # report <title> <problem|ok> <body>
 report() {
     local title="$1" state="$2" body="$3" number
-    number=$(gh issue list --state open --limit 100 --json number,title \
-        --jq "map(select(.title == \"$title\"))[0].number // empty")
+    # Only an issue this workflow opened counts. Anyone can open an issue with
+    # the same title here, and it must not capture or silence the alert. gh
+    # reports the workflow token's login as "app/github-actions" on issues.
+    number=$(gh issue list --state open --limit 100 --json number,title,author \
+        --jq "map(select(.title == \"$title\" and (.author.login | endswith(\"github-actions\"))))[0].number // empty")
     if [[ "$state" == ok ]]; then
         [[ -z "$number" ]] || gh issue close "$number" --comment "$body"
     elif [[ -n "$number" ]]; then

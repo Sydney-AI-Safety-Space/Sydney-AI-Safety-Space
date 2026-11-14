@@ -23,9 +23,10 @@ on:
   workflow_dispatch:
     inputs:
       site_url:
-        description: Check this page instead of the live site (to test the alert)
+        description: Check this page instead of the home page, to test the alert. Use a page on sydneyaisafetyspace.org.
         required: false
-  # Run the check when the check itself changes. No issues are opened.
+  # Run the check when the check itself changes, which includes Dependabot
+  # updating an action here. It sends one email; no issues are opened.
   pull_request:
     types: [opened, reopened]
     paths:

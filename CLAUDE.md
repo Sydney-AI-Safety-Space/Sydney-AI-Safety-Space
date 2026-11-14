@@ -64,6 +64,10 @@ emails each submission to the address in the form's `action` URL
     tab if it stops.
   - It checks that FormSubmit accepts a message, not that the email reaches
     the inbox, and not the page script (use a browser for that).
+  - After changing the form, do not wait for Monday: run it by hand (Actions,
+    Contact Form Check, Run workflow).
+  - A PR that changes the check's own files also runs it once, so it sends
+    one of those emails off schedule. That includes Dependabot's.
   - To test the alert: run the workflow by hand (Actions, Contact Form Check,
     Run workflow) with `site_url` set to a page with no contact form, such as
     `https://sydneyaisafetyspace.org/events.html`. Run it again with the
