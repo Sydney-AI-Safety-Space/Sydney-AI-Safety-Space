@@ -1,0 +1,72 @@
+name: Contact Form Check
+
+# Once a week, sends a test message through the contact form on the live site
+# and opens an issue if that fails. Without this, a broken form is only seen
+# by the visitors whose messages do not arrive.
+#
+# Each run that passes emails the form's recipient one message with "form
+# health check" in the subject: FormSubmit cannot accept a submission without
+# sending it. Those emails are also the sign that this check is still running.
+#
+# GitHub switches off scheduled workflows in a public repository after 60 days
+# without activity. The check warns by issue at 45 days. Do not add a job that
+# makes commits to keep the schedule alive: GitHub treats that as abuse.
+#
+# To test the alert, run the workflow by hand with "site_url" set to a page
+# that has no contact form. Running it again without the input closes the
+# issue. See "Contact Form" in CLAUDE.md.
+
+on:
+  schedule:
+    # Mondays around 9am in Sydney. GitHub often starts schedules late.
+    - cron: "23 22 * * 0"
+  workflow_dispatch:
+    inputs:
+      site_url:
+        description: Check this page instead of the home page, to test the alert. Use a page on sydneyaisafetyspace.org.
+        required: false
+  # Run the check when the check itself changes, which includes Dependabot
+  # updating an action here. It sends one email; no issues are opened.
+  pull_request:
+    types: [opened, reopened]
+    paths:
+      - .github/workflows/contact-form-check.yml
+      - .github/scripts/check-contact-form.sh
+      - .github/scripts/report-check.sh
+
+permissions:
+  contents: read
+  issues: write
+
+# Naming the shell turns on pipefail. Without it, piping the check through
+# tee would hide its failure and no alert would ever be raised.
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  check:
+    name: Send a test message
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Send a test message through the live form
+        id: probe
+        env:
+          SITE_URL: ${{ inputs.site_url }}
+        run: .github/scripts/check-contact-form.sh 2>&1 | tee "$RUNNER_TEMP/check.log"
+
+      - name: Open or close the alert issues
+        if: ${{ !cancelled() && github.event_name != 'pull_request' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PROBE: ${{ steps.probe.outcome }}
+          CHECK_LOG: ${{ runner.temp }}/check.log
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          # Who is assigned the issue, so it reaches them whether or not
+          # they watch the repository. Comma-separated GitHub logins.
+          ASSIGNEES: HunterJayPerson
+        run: .github/scripts/report-check.sh

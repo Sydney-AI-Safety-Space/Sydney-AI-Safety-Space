@@ -40,10 +40,12 @@ jobs:
           # Start-of-run marker for the verify step below (github context has
           # no run_started_at; an empty comparand would make the check vacuous).
           echo "started=$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> "$GITHUB_OUTPUT"
-          # claude-code-action refuses to review PRs that modify workflow
-          # files (prompt-injection safeguard), so no comment will be posted
-          # on those and the verify step below must not fail them. Ask the
-          # API for the PR's file list rather than diffing locally.
+          # claude-code-action can refuse to review a PR that modifies
+          # workflow files (prompt-injection safeguard). It does not always:
+          # it reviewed #15, which added a different workflow. So a missing
+          # comment must not fail those PRs, but the steps below look for one
+          # before saying the review was skipped. Ask the API for the PR's
+          # file list rather than diffing locally.
           if gh api --paginate "repos/${GITHUB_REPOSITORY}/pulls/${PR_NUMBER}/files" \
               --jq '.[].filename' | grep -q '^\.github/workflows/'; then
             echo "workflows_modified=true" >> "$GITHUB_OUTPUT"
@@ -72,8 +74,9 @@ jobs:
             PR is meant; there is no one to answer.
 
             This is a small static site: plain HTML pages, one stylesheet, a
-            few inline scripts, no build step. It is deployed as-is to
-            sydneyaisafetyspace.com.
+            few inline scripts, no build step. GitHub Pages serves it as-is at
+            https://sydneyaisafetyspace.org (sydneyaisafetyspace.com redirects
+            there).
 
             You have a full checkout of the repository, not just the diff. Use it:
             read the changed files in full, read the code around each change, and
@@ -109,8 +112,8 @@ jobs:
       # deliverable is a comment must fail when there is no comment: re-run
       # the job to get the review. Sticky comments are UPDATED in place on
       # re-runs, so match on updated_at, not created_at.
-      - name: Fail if no review comment was posted
-        if: steps.pr-info.outputs.workflows_modified != 'true'
+      - name: Count the review comments from this run
+        id: review
         env:
           GH_TOKEN: ${{ github.token }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
@@ -122,18 +125,21 @@ jobs:
           fi
           POSTED=$(gh api "repos/${GITHUB_REPOSITORY}/issues/${PR_NUMBER}/comments?per_page=100" --paginate \
             --jq "[.[] | select((.user.login | startswith(\"claude\")) and (.updated_at >= \"${RUN_STARTED}\"))] | length")
-          if [ "${POSTED}" -eq 0 ]; then
-            echo "::error::Claude review ran but posted no PR comment (silent no-op). Re-run this job to get the review."
-            exit 1
-          fi
-          echo "Review comment verified (${POSTED} posted/updated since ${RUN_STARTED})."
+          echo "posted=${POSTED}" >> "$GITHUB_OUTPUT"
+          echo "Review comments posted or updated since ${RUN_STARTED}: ${POSTED}"
 
-      # A skipped verify step shows as neutral/grey — a workflow-touching PR
-      # would otherwise go green with zero automated review and nothing on the
-      # PR saying so. Say it out loud instead; the marker keeps re-runs from
-      # stacking duplicate comments.
+      - name: Fail if no review comment was posted
+        if: steps.pr-info.outputs.workflows_modified != 'true' && steps.review.outputs.posted == '0'
+        run: |
+          echo "::error::Claude review ran but posted no PR comment (silent no-op). Re-run this job to get the review."
+          exit 1
+
+      # A workflow-touching PR that got no review would otherwise go green
+      # with nothing on the PR saying so. Say it out loud, but only when no
+      # review was posted: the notice used to appear beside a real review
+      # (#15). The marker keeps re-runs from stacking duplicate comments.
       - name: Note that the review was skipped (workflow-modifying PR)
-        if: steps.pr-info.outputs.workflows_modified == 'true'
+        if: steps.pr-info.outputs.workflows_modified == 'true' && steps.review.outputs.posted == '0'
         env:
           GH_TOKEN: ${{ github.token }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
