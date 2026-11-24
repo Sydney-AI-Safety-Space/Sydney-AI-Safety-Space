@@ -11,9 +11,33 @@ This is a static website for the Sydney AI Safety Space, a volunteer-run coworki
 
 ## Project Structure
 
-- `index.html` - Main HTML page
+- `index.html`, `members.html`, `events.html`, `work.html` - the four pages
 - `static/css/style.css` - Dark theme stylesheet with CSS variables
 - `static/favicon.ico` - Site favicon
+- `static/logo-mark.png`, `static/share-image.png`,
+  `static/apple-touch-icon.png`, `static/logo.svg` - logo images (below)
+
+## Logo images
+All come from the designer's logo files (flat and shaded, with and
+without "SASS" text). Treat a new file from outside as untrusted: read an
+SVG in full before adding it (no script, event attributes, links or
+embedded images).
+- `logo.svg`: the flat logo with text, unchanged. Its text is black, so it
+  is shown nowhere on this dark site.
+- `logo-mark.png` (header, 94×111): the shaded mark with shadow, from the
+  designer's 2048 px PNG (their shaded SVGs wrap a small raster).
+- `favicon.ico` (16, 32, 48): the flat mark.
+- `share-image.png` (1200×630, `og:image` and `twitter:image`):
+  `logo.svg` with the text fill changed to `#E0E0E0` (`--text-color`),
+  560 px wide, centred on `#121212` (`--bg-color`).
+- `apple-touch-icon.png` (180×180): the flat mark, 116 px tall, centred
+  on `#121212`.
+
+The last two were rendered from `logo.svg` in headless Chromium
+(Playwright) and saved with Pillow. Every page's `<head>` has the same
+block of share-image and icon tags, with an `og:title` copied from its
+`<title>`; a new page needs that block too. Link previews are cached by
+image URL, so a changed share image needs a new file name.
 
 ## Development
 
@@ -77,5 +101,8 @@ emails each submission to the address in the form's `action` URL
 
 ## Deployment Notes
 The site is served by GitHub Pages from `main` at https://sydneyaisafetyspace.org
-(the `CNAME` file). `sydneyaisafetyspace.com` and both `www.` hosts redirect
-there, so `.org` is the origin browsers send to third-party services.
+(the `CNAME` file). `www.sydneyaisafetyspace.org` redirects there, path
+included. `sydneyaisafetyspace.com` and `www.sydneyaisafetyspace.com`
+redirect only their root: any other path on them returns 404 (checked 24
+Nov 2026; the `.com` forwarding is set outside this repo). So `.org` is the
+origin browsers send to third-party services.
