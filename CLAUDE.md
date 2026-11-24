@@ -35,9 +35,11 @@ embedded images).
 
 The last two were rendered from `logo.svg` in headless Chromium
 (Playwright) and saved with Pillow. Every page's `<head>` has the same
-block of share-image and icon tags, with an `og:title` copied from its
-`<title>`; a new page needs that block too. Link previews are cached by
-image URL, so a changed share image needs a new file name.
+share-image, icon and description tags (`description`, `og:description`
+and `twitter:description` hold the same sentence on every page), with
+an `og:title` copied from its `<title>`; a new page needs them too.
+Link previews are cached by image URL, so a changed share image needs a
+new file name.
 
 ## Development
 
