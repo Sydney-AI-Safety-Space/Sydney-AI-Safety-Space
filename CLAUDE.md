@@ -104,7 +104,21 @@ emails each submission to the address in the form's `action` URL
 ## Deployment Notes
 The site is served by GitHub Pages from `main` at https://sydneyaisafetyspace.org
 (the `CNAME` file). `www.sydneyaisafetyspace.org` redirects there, path
-included. `sydneyaisafetyspace.com` and `www.sydneyaisafetyspace.com`
-redirect only their root: any other path on them returns 404 (checked 24
-Nov 2026; the `.com` forwarding is set outside this repo). So `.org` is the
-origin browsers send to third-party services.
+included. So `.org` is the origin browsers send to third-party services.
+
+### Domains and DNS
+Neither domain's DNS is set from this repo.
+- `sydneyaisafetyspace.org`: DNS at GoDaddy (`ns31` and
+  `ns32.domaincontrol.com`).
+- `sydneyaisafetyspace.com`: registered at GoDaddy, DNS on Cloudflare (Free
+  plan) since 25 Nov 2026, nameservers `corey.ns.cloudflare.com` and
+  `gabriella.ns.cloudflare.com`. One redirect rule, `com to org`, sends
+  every path on `sydneyaisafetyspace.com` and `www.sydneyaisafetyspace.com`
+  to the same path on https://sydneyaisafetyspace.org with a 301, query
+  string kept (checked 25 Nov 2026). The redirect only runs on proxied
+  records, so the two `A` records and the `www` record stay proxied (orange
+  cloud). GoDaddy's forwarding for the `.com` is gone.
+- The way back to GoDaddy's DNS for the `.com` is written down with the
+  setup notes, outside this repo. It is more than switching the nameservers
+  back: GoDaddy deletes the domain's DNS records when they change, so the
+  records and the forward have to be added again.
