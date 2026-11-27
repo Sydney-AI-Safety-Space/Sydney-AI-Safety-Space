@@ -55,11 +55,12 @@ The CSS uses CSS custom properties (variables) for theming:
 - Uses flexbox for layout
 
 ## Donations
-The Donate and Donate monthly buttons under the home page's intro are Stripe
-payment links (one-off, and monthly). The amounts and the payment page's
-wording are set in Stripe, not here. If a link is turned off in Stripe,
-nothing on the site flags it. The block has `id="donate"`, so other pages or print can link to
-`index.html#donate`: keep the id if anything does.
+The Donate and Donate monthly buttons, centred in the last section of the
+home page, are Stripe payment links (one-off, and monthly). The amounts and
+the payment page's wording are set in Stripe, not here. If a link is turned
+off in Stripe, nothing on the site flags it. The section has `id="donate"`,
+so other pages or print can link to `index.html#donate`: keep the id if
+anything does.
 
 ## Contact Form
 The contact form on `index.html` posts to FormSubmit (formsubmit.co), which
