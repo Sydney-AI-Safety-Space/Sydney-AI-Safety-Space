@@ -2,7 +2,8 @@
 
 Nothing leaves this machine: the browser asks for a made-up site whose
 files are served straight from this repo, its requests to formsubmit.co
-get canned answers, and every other request is blocked. It checks the
+get canned answers, and every other HTTP(S) request is blocked (the page
+opens no WebSockets). It checks the
 messages under each field, where focus goes, that FormSubmit's text never
 reaches the page, and that without JavaScript the browser's own checks
 are still on.
@@ -59,14 +60,18 @@ REFUSALS = {
 
 def guard(context, on_formsubmit):
     """Serve SITE from the repo, hand formsubmit.co to the mock, block the
-    rest. No real request is made, so even a changed form address fails
+    rest. No real HTTP(S) request is made, so even a changed form address fails
     the test instead of emailing anyone."""
     def route(r):
         url = r.request.url
         if url.startswith(SITE + '/'):
             path = urllib.parse.unquote(urllib.parse.urlsplit(url).path).lstrip('/')
-            file = (ROOT / path).resolve()
-            if file.is_relative_to(ROOT) and file.is_file():
+            try:
+                file = (ROOT / path).resolve()
+                found = file.is_relative_to(ROOT) and file.is_file()
+            except (OSError, ValueError):  # a null byte, say
+                found = False
+            if found:
                 r.fulfill(path=str(file))
             else:
                 r.fulfill(status=404, body='')
@@ -167,6 +172,14 @@ def run(browser_type, device, shots, label):
         case('empty message: focus on Message, which shows focus, not red',
              form.focused() == 'cf-message' and form.border('message') != ERROR_RED)
 
+        # What Hunter typed on his phone on 27 Nov: "test" in every box.
+        form.load()
+        form.submit(name='test', email='test', message='test')
+        case('"test" in every box: "Enter a valid email" under Email, nothing sent',
+             form.errors() == {'name': '', 'email': 'Enter a valid email', 'message': ''}
+             and form.focused() == 'cf-email' and not form.sent)
+        form.shot(shots, f'{label}-0-test-everywhere')
+
         for email in ('test', 'a@b', 'a@b.', 'sam@example .com'):
             form.load()
             form.submit(email=email)
@@ -202,6 +215,7 @@ def run(browser_type, device, shots, label):
         case('autofill with only a change event clears the message',
              form.errors()['email'] == '' and
              form.page.get_attribute('#cf-email', 'aria-invalid') is None)
+        expect(form.page.locator('#cf-email')).to_have_accessible_description('')
 
         form.load()
         form.submit(name='   ', message=' \n ')
@@ -213,6 +227,8 @@ def run(browser_type, device, shots, label):
         case('typing a name clears and hides its message, leaves the other',
              form.errors() == {'name': '', 'email': '', 'message': 'Enter a message'}
              and form.page.get_attribute('#cf-name', 'aria-invalid') is None)
+        # A hidden message still counts in aria-describedby, so its text must go too.
+        expect(form.page.locator('#cf-name')).to_have_accessible_description('')
 
         # Sending.
         form.load()
@@ -262,7 +278,7 @@ def run(browser_type, device, shots, label):
         nojs.goto(SITE + '/index.html')
         case('no JavaScript: browser checks still on',
              nojs.locator('.contact-form').get_attribute('novalidate') is None and
-             nojs.locator('#cf-email:invalid').count() == 1)
+             nojs.locator('#cf-name:invalid, #cf-email:invalid, #cf-message:invalid').count() == 3)
         return failures
     finally:
         browser.close()
