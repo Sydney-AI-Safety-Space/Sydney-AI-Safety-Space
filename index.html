@@ -111,13 +111,16 @@
                  CLAUDE.md. -->
             <form class="contact-form" action="https://formsubmit.co/contact@sydneyaisafetyspace.org" method="POST">
                 <label for="cf-name">Name</label>
-                <input id="cf-name" type="text" name="name" autocomplete="name" required>
+                <input id="cf-name" type="text" name="name" autocomplete="name" required aria-describedby="cf-name-error">
+                <p class="field-error" id="cf-name-error" role="alert" hidden></p>
 
                 <label for="cf-email">Email</label>
-                <input id="cf-email" type="email" name="email" autocomplete="email" required>
+                <input id="cf-email" type="email" name="email" autocomplete="email" required aria-describedby="cf-email-error">
+                <p class="field-error" id="cf-email-error" role="alert" hidden></p>
 
                 <label for="cf-message">Message</label>
-                <textarea id="cf-message" name="message" rows="5" placeholder="Hi, I am Sam - I would like to drop by on Tuesday around 10am." required></textarea>
+                <textarea id="cf-message" name="message" rows="5" placeholder="Hi, I am Sam - I would like to drop by on Tuesday around 10am." required aria-describedby="cf-message-error"></textarea>
+                <p class="field-error" id="cf-message-error" role="alert" hidden></p>
 
                 <input type="hidden" name="_subject" value="Sydney AI Safety Space - website enquiry">
                 <input type="hidden" name="_template" value="table">
@@ -135,6 +138,47 @@
             (function () {
                 var form = document.querySelector('.contact-form');
                 if (!form || !window.fetch) return;
+                // Check the fields here rather than leave it to the browser,
+                // whose message is a bubble that vanishes after a moment (or
+                // sits behind a phone's keyboard): the page itself said
+                // nothing. Without JavaScript the browser still checks them.
+                form.noValidate = true;
+                var checks = [
+                    { field: form.querySelector('#cf-name'), say: 'Enter your name' },
+                    // FormSubmit forwards any email at all, even "a@b", so
+                    // also ask for a dot in the domain: a reply needs one.
+                    { field: form.querySelector('#cf-email'), say: 'Enter a valid email',
+                      ok: function (value) { return /@[^@]+\.[^@.]+$/.test(value); } },
+                    { field: form.querySelector('#cf-message'), say: 'Enter a message' }
+                ];
+                function valid(c) {
+                    var value = c.field.value.trim();
+                    return value !== '' && c.field.validity.valid && (!c.ok || c.ok(value));
+                }
+                // Show or clear the message under a field. It is the field's
+                // aria-describedby, read with the field when focus lands, and
+                // a role="alert", read when it appears (for Enter in a field
+                // that already has focus).
+                function check(c) {
+                    var good = valid(c);
+                    var error = document.getElementById(c.field.getAttribute('aria-describedby'));
+                    error.textContent = good ? '' : c.say;
+                    error.hidden = good;
+                    if (good) c.field.removeAttribute('aria-invalid');
+                    else c.field.setAttribute('aria-invalid', 'true');
+                    return good;
+                }
+                checks.forEach(function (c) {
+                    // Messages are written only on Send. Typing only clears one,
+                    // once its field is fixed ("change" too: some autofill fires
+                    // no "input"); rewriting the alert on each key would make
+                    // screen readers say it again and again.
+                    ['input', 'change'].forEach(function (type) {
+                        c.field.addEventListener(type, function () {
+                            if (c.field.hasAttribute('aria-invalid') && valid(c)) check(c);
+                        });
+                    });
+                });
                 var status = form.querySelector('.form-status');
                 var button = form.querySelector('button[type="submit"]');
                 var honeypot = form.querySelector('[name="_honey"]');
@@ -156,6 +200,12 @@
                 }
                 form.addEventListener('submit', function (e) {
                     e.preventDefault();
+                    var bad = checks.filter(function (c) { return !check(c); });
+                    if (bad.length) {
+                        status.hidden = true;
+                        bad[0].field.focus();
+                        return;
+                    }
                     status.hidden = false;
                     // Only bots should fill the hidden field, and FormSubmit
                     // ignores it on the /ajax/ endpoint, so stop those here.
@@ -178,7 +228,11 @@
                         // body. An outage page is not JSON, so json() rejects.
                         return res.json().then(function (data) {
                             if (!res.ok || !data || String(data.success) !== 'true') {
-                                throw new Error('FormSubmit rejected the submission');
+                                // Its reason goes to the console, never the page:
+                                // the text is untrusted, and its known rejections
+                                // (form not activated, no Referer) are not the
+                                // visitor's to fix.
+                                throw new Error('FormSubmit rejected the submission: ' + (data && data.message));
                             }
                             thanks();
                         });
