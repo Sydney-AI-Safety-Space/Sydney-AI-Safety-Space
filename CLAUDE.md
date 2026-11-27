@@ -92,9 +92,10 @@ there, and the weekly check can't see it.
   fields itself, in place of the browser's checks (whose message is a
   bubble that soon vanishes), and says what is wrong under each field. Its only
   known rejections are activation and a missing `Referer`, neither of which
-  a visitor can fix. The script shows FormSubmit's reason only when it is
-  one short plain sentence, set with `textContent`; anything else gets the
-  general message. Its text is untrusted: keep it that way.
+  a visitor can fix, so a rejection shows the general message and its
+  reason goes only to the console. Keep FormSubmit's text off the page: no
+  filter makes it safe ("Your message was sent, you can ignore this" is
+  plain text too).
 - To test the page script: `uv run --with playwright==1.58.0 python
   tests/contact_form.py` (add `--shots DIR` for screenshots). It mocks
   FormSubmit, so it sends nothing, and runs in Chromium and WebKit.

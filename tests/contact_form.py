@@ -1,9 +1,11 @@
 """Browser test for the contact form's page script on index.html.
 
 FormSubmit is mocked, so this never sends anything: each case answers the
-page's request with a canned response. It checks the messages under each
-field, where focus goes, what FormSubmit text may reach the page, and that
-without JavaScript the browser's own checks are still on.
+page's request to formsubmit.co with a canned response, and every other
+request that leaves the local server is blocked. It checks the messages
+under each field, where focus goes, that FormSubmit's text never reaches
+the page, and that without JavaScript the browser's own checks are still
+on.
 
 Run from the repo root (needs uv, or Python with playwright installed):
 
@@ -27,6 +29,7 @@ from playwright.sync_api import expect, sync_playwright
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 GENERAL = 'Sorry, your message could not be sent. Please email us directly instead.'
 THANKS = 'Thanks - we will be in touch soon.'
+ERROR_RED = 'rgb(255, 157, 157)'
 
 
 def json_answer(success, message):
@@ -36,16 +39,15 @@ def json_answer(success, message):
 
 OK = json_answer('true', 'The form was submitted successfully.')
 
-# FormSubmit answers that must show only the general message.
-HOSTILE = {
+# FormSubmit refusals. Whatever the text, the page shows only the general
+# message: FormSubmit's text is untrusted, and plain words can mislead too.
+REFUSALS = {
+    'plain reason': 'Too many submissions, try again later.',
+    'says it was sent': 'Your message was sent, you can ignore this',
+    '"submitted successfully"': 'The form was submitted successfully.',
     'markup': '<img src=x onerror="document.title=1">Enter a valid email',
-    'link': 'Please resend at evil.example',
     'address': 'Please email help@evil.example instead',
-    'number': 'Call 1800 000 000 to finish sending',
-    'two sentences': 'Rejected. Visit the help page',
-    'too long': 'Enter a valid email ' + 'please ' * 10,
     'right-to-left override': 'Enter a valid ‮liame',
-    'newline': 'Enter a valid email\nPlease call us',
     'activation (seen)': "This form needs Activation. We've sent you an email containing an "
                          "'Activate Form' link. Just click it and your form will be actived!",
     'no Referer (seen)': 'Make sure you open this page through a web server, FormSubmit will '
@@ -65,12 +67,26 @@ class QuietHandler(http.server.SimpleHTTPRequestHandler):
         pass
 
 
+def guard(context, base, on_formsubmit):
+    """Let the local server through, hand formsubmit.co to the mock, and
+    block everything else, so a changed form address fails the test
+    instead of emailing anyone."""
+    def route(r):
+        if r.request.url.startswith(base + '/'):
+            r.continue_()
+        elif r.request.url.startswith('https://formsubmit.co/'):
+            on_formsubmit(r)
+        else:
+            r.abort()
+    context.route('**/*', route)
+
+
 class Form:
-    def __init__(self, page, base):
-        self.page, self.base, self.sent, self.answer = page, base, [], OK
-        self.dialogs = []
-        page.route('https://formsubmit.co/**', self._fulfil)
-        page.on('dialog', lambda d: (self.dialogs.append(d.message), d.dismiss()))
+    def __init__(self, context, base):
+        self.base, self.sent, self.answer, self.dialogs = base, [], OK, []
+        guard(context, base, self._fulfil)
+        self.page = context.new_page()
+        self.page.on('dialog', lambda d: (self.dialogs.append(d.message), d.dismiss()))
 
     def _fulfil(self, route):
         self.sent.append(route.request)
@@ -82,16 +98,20 @@ class Form:
         self.page.goto(self.base + '/index.html')
         self.sent.clear()
 
-    def submit(self, name='Sam', email='sam@example.com', message='Hello', answer=OK):
-        self.answer = answer
+    def fill(self, name='Sam', email='sam@example.com', message='Hello'):
         self.page.fill('#cf-name', name)
         self.page.fill('#cf-email', email)
         self.page.fill('#cf-message', message)
+
+    def submit(self, answer=OK, **fields):
+        self.answer = answer
+        self.fill(**fields)
         self.page.click('.contact-form button[type=submit]')
 
     def errors(self):
-        return {f: self.page.locator(f'#cf-{f}-error').inner_text() if
-                self.page.locator(f'#cf-{f}-error').is_visible() else ''
+        """Each field's message, '' when its element is hidden."""
+        return {f: '' if self.page.get_attribute(f'#cf-{f}-error', 'hidden') is not None
+                else self.page.inner_text(f'#cf-{f}-error') or '(shown but empty)'
                 for f in ('name', 'email', 'message')}
 
     def status(self):
@@ -110,8 +130,7 @@ class Form:
 def run(browser_type, device, base, shots, label):
     browser = browser_type.launch()
     try:
-        context = browser.new_context(**device)
-        form = Form(context.new_page(), base)
+        form = Form(browser.new_context(**device), base)
         form.load()
         failures = []
 
@@ -127,8 +146,14 @@ def run(browser_type, device, base, shots, label):
              form.errors() == {'name': 'Enter your name', 'email': 'Enter a valid email',
                                'message': 'Enter a message'}
              and form.focused() == 'cf-name' and not form.sent and form.status() == '')
-        expect(form.page.locator('#cf-name')).to_have_accessible_description('Enter your name')
-        expect(form.page.locator('#cf-name')).to_have_attribute('aria-invalid', 'true')
+        name_field = form.page.locator('#cf-name')
+        expect(name_field).to_have_accessible_description('Enter your name')
+        expect(name_field).to_have_attribute('aria-invalid', 'true')
+        expect(form.page.locator('#cf-name-error')).to_have_role('alert')
+        case('the focused bad field shows focus, not the error red',
+             name_field.evaluate('e => getComputedStyle(e).borderColor') != ERROR_RED and
+             form.page.locator('#cf-email').evaluate('e => getComputedStyle(e).borderColor')
+             == ERROR_RED)
         form.shot(shots, f'{label}-1-empty')
 
         for email in ('test', 'a@b', 'a@b.', 'sam@example .com'):
@@ -140,6 +165,21 @@ def run(browser_type, device, base, shots, label):
             if email == 'test':
                 form.shot(shots, f'{label}-2-bad-email')
 
+        # A phone's Go key, or Enter, in the bad field itself: focus does
+        # not move, so the message must be an alert to be announced.
+        form.load()
+        form.fill(email='test')
+        form.page.press('#cf-email', 'Enter')
+        case('Enter in a bad email field: message shown, nothing sent',
+             form.errors()['email'] == 'Enter a valid email' and
+             form.focused() == 'cf-email' and not form.sent)
+
+        form.page.evaluate("""() => { const e = document.querySelector('#cf-email');
+            e.value = 'sam@example.com'; e.dispatchEvent(new Event('change')); }""")
+        case('autofill with only a change event clears the message',
+             form.errors()['email'] == '' and
+             form.page.get_attribute('#cf-email', 'aria-invalid') is None)
+
         form.load()
         form.submit(name='   ', message=' \n ')
         case('spaces only in Name and Message: both flagged, focus on Name',
@@ -147,32 +187,30 @@ def run(browser_type, device, base, shots, label):
              and form.focused() == 'cf-name' and not form.sent)
 
         form.page.fill('#cf-name', 'Sam')
-        case('typing a name clears its message, leaves the other',
+        case('typing a name clears and hides its message, leaves the other',
              form.errors() == {'name': '', 'email': '', 'message': 'Enter a message'}
              and form.page.get_attribute('#cf-name', 'aria-invalid') is None)
 
         # Sending.
         form.load()
         form.submit()
-        case('good form: sent once, thanks shown', len(form.sent) == 1 and
-             form.status().startswith(THANKS))
+        case('good form: sent once, thanks shown, no field messages',
+             len(form.sent) == 1 and form.status().startswith(THANKS) and
+             form.errors() == {'name': '', 'email': '', 'message': ''})
 
-        form.load()
-        form.submit(answer=json_answer('false', 'Too many submissions, try again later.'))
-        case("plain reason from FormSubmit is shown",
-             form.status() == 'Sorry, your message could not be sent (Too many submissions, '
-                              'try again later). Please email us directly instead.')
-        form.shot(shots, f'{label}-4-plain-reason')
-
-        for name, message in HOSTILE.items():
+        for name, message in REFUSALS.items():
             form.load()
             form.submit(answer=json_answer('false', message))
-            html = form.page.inner_html('.form-status')
-            case(f'FormSubmit text ({name}): general message only',
-                 form.status() == GENERAL and '<img' not in html
-                 and form.page.title() != '1' and not form.dialogs)
-            if name == 'activation (seen)':
-                form.shot(shots, f'{label}-5-general')
+            case(f'FormSubmit refuses ({name}): general message only',
+                 form.status() == GENERAL and form.page.title() != '1' and not form.dialogs
+                 and form.page.locator('.form-status *').count() == 1)
+            if name == 'plain reason':
+                form.shot(shots, f'{label}-3-refused')
+
+        form.fill(email='test')
+        form.page.click('.contact-form button[type=submit]')
+        case('a field problem after a failure hides the old failure line',
+             form.status() == '' and form.errors()['email'] == 'Enter a valid email')
 
         for name, answer in {
             'message is not text': {'status': 200, 'content_type': 'application/json',
@@ -192,7 +230,9 @@ def run(browser_type, device, base, shots, label):
 
         # Without JavaScript the browser's own required/type=email checks
         # must still be on (the script is what switches them off).
-        nojs = browser.new_context(java_script_enabled=False, **device).new_page()
+        nojs_context = browser.new_context(java_script_enabled=False, **device)
+        guard(nojs_context, base, lambda r: r.abort())
+        nojs = nojs_context.new_page()
         nojs.goto(base + '/index.html')
         case('no JavaScript: browser checks still on',
              nojs.locator('.contact-form').get_attribute('novalidate') is None and

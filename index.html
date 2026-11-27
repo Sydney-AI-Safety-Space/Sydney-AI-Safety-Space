@@ -112,15 +112,15 @@
             <form class="contact-form" action="https://formsubmit.co/contact@sydneyaisafetyspace.org" method="POST">
                 <label for="cf-name">Name</label>
                 <input id="cf-name" type="text" name="name" autocomplete="name" required aria-describedby="cf-name-error">
-                <p class="field-error" id="cf-name-error" hidden></p>
+                <p class="field-error" id="cf-name-error" role="alert" hidden></p>
 
                 <label for="cf-email">Email</label>
                 <input id="cf-email" type="email" name="email" autocomplete="email" required aria-describedby="cf-email-error">
-                <p class="field-error" id="cf-email-error" hidden></p>
+                <p class="field-error" id="cf-email-error" role="alert" hidden></p>
 
                 <label for="cf-message">Message</label>
                 <textarea id="cf-message" name="message" rows="5" placeholder="Hi, I am Sam - I would like to drop by on Tuesday around 10am." required aria-describedby="cf-message-error"></textarea>
-                <p class="field-error" id="cf-message-error" hidden></p>
+                <p class="field-error" id="cf-message-error" role="alert" hidden></p>
 
                 <input type="hidden" name="_subject" value="Sydney AI Safety Space - website enquiry">
                 <input type="hidden" name="_template" value="table">
@@ -164,23 +164,14 @@
                     return good;
                 }
                 checks.forEach(function (c) {
-                    // Once a field has been flagged, clear it as soon as it is fixed.
-                    c.field.addEventListener('input', function () {
-                        if (c.field.hasAttribute('aria-invalid')) check(c);
+                    // Once a field has been flagged, clear it as soon as it is
+                    // fixed ("change" too: some autofill fires no "input").
+                    ['input', 'change'].forEach(function (type) {
+                        c.field.addEventListener(type, function () {
+                            if (c.field.hasAttribute('aria-invalid')) check(c);
+                        });
                     });
                 });
-                // FormSubmit's reason for turning a message away, when it is
-                // safe to show: its text is untrusted, so only one short
-                // plain sentence (letters, spaces, , ' ! ? -) passes. Anything
-                // with markup, a link, an address, a number or a second
-                // sentence gets the general message instead, which also covers
-                // its two known rejections (form not activated, no Referer):
-                // neither is the visitor's to fix.
-                function plainReason(text) {
-                    if (typeof text !== 'string') return '';
-                    text = text.trim().replace(/\.$/, '');
-                    return text.length <= 80 && /^[A-Za-z][A-Za-z ,'!?-]*$/.test(text) ? text : '';
-                }
                 var status = form.querySelector('.form-status');
                 var button = form.querySelector('button[type="submit"]');
                 var honeypot = form.querySelector('[name="_honey"]');
@@ -198,9 +189,7 @@
                     // whoever looks into a "the form is broken" report.
                     if (err) console.error('Contact form:', err);
                     status.className = 'form-status form-status-error';
-                    status.innerHTML = 'Sorry, your message could not be sent<span></span>. Please <a href="mailto:contact@sydneyaisafetyspace.org">email us</a> directly instead.';
-                    // textContent, never innerHTML: the reason is FormSubmit's text.
-                    if (err && err.reason) status.querySelector('span').textContent = ' (' + err.reason + ')';
+                    status.innerHTML = 'Sorry, your message could not be sent. Please <a href="mailto:contact@sydneyaisafetyspace.org">email us</a> directly instead.';
                 }
                 form.addEventListener('submit', function (e) {
                     e.preventDefault();
@@ -232,11 +221,11 @@
                         // body. An outage page is not JSON, so json() rejects.
                         return res.json().then(function (data) {
                             if (!res.ok || !data || String(data.success) !== 'true') {
-                                var err = new Error('FormSubmit rejected the submission: ' + (data && data.message));
-                                // A reason only from an outright refusal, so an
-                                // error status can't come with "submitted successfully".
-                                err.reason = res.ok && data && String(data.success) === 'false' ? plainReason(data.message) : '';
-                                throw err;
+                                // Its reason goes to the console, never the page:
+                                // the text is untrusted, and its known rejections
+                                // (form not activated, no Referer) are not the
+                                // visitor's to fix.
+                                throw new Error('FormSubmit rejected the submission: ' + (data && data.message));
                             }
                             thanks();
                         });

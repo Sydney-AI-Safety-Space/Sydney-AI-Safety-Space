@@ -149,16 +149,17 @@ h1, h2, h3 {
     min-height: 6rem;
 }
 
+/* A field the visitor needs to fix, with what to fix right under it.
+   Before the focus rule, so the field being typed in still shows focus. */
+.contact-form input[aria-invalid="true"],
+.contact-form textarea[aria-invalid="true"] {
+    border-color: #ff9d9d;
+}
+
 .contact-form input:focus,
 .contact-form textarea:focus {
     outline: none;
     border-color: var(--link-color);
-}
-
-/* A field the visitor needs to fix, with what to fix right under it */
-.contact-form input[aria-invalid="true"],
-.contact-form textarea[aria-invalid="true"] {
-    border-color: #ff9d9d;
 }
 
 .field-error {
