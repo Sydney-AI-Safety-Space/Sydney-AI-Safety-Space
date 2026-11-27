@@ -151,11 +151,16 @@
                       ok: function (value) { return /@[^@]+\.[^@.]+$/.test(value); } },
                     { field: form.querySelector('#cf-message'), say: 'Enter a message' }
                 ];
-                // Show or clear the message under a field (the field's
-                // aria-describedby, so screen readers read it with the field).
-                function check(c) {
+                function valid(c) {
                     var value = c.field.value.trim();
-                    var good = value !== '' && c.field.validity.valid && (!c.ok || c.ok(value));
+                    return value !== '' && c.field.validity.valid && (!c.ok || c.ok(value));
+                }
+                // Show or clear the message under a field. It is the field's
+                // aria-describedby, read with the field when focus lands, and
+                // a role="alert", read when it appears (for Enter in a field
+                // that already has focus).
+                function check(c) {
+                    var good = valid(c);
                     var error = document.getElementById(c.field.getAttribute('aria-describedby'));
                     error.textContent = good ? '' : c.say;
                     error.hidden = good;
@@ -164,11 +169,13 @@
                     return good;
                 }
                 checks.forEach(function (c) {
-                    // Once a field has been flagged, clear it as soon as it is
-                    // fixed ("change" too: some autofill fires no "input").
+                    // Messages are written only on Send. Typing only clears one,
+                    // once its field is fixed ("change" too: some autofill fires
+                    // no "input"); rewriting the alert on each key would make
+                    // screen readers say it again and again.
                     ['input', 'change'].forEach(function (type) {
                         c.field.addEventListener(type, function () {
-                            if (c.field.hasAttribute('aria-invalid')) check(c);
+                            if (c.field.hasAttribute('aria-invalid') && valid(c)) check(c);
                         });
                     });
                 });

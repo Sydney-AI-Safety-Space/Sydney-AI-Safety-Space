@@ -97,8 +97,10 @@ there, and the weekly check can't see it.
   filter makes it safe ("Your message was sent, you can ignore this" is
   plain text too).
 - To test the page script: `uv run --with playwright==1.58.0 python
-  tests/contact_form.py` (add `--shots DIR` for screenshots). It mocks
-  FormSubmit, so it sends nothing, and runs in Chromium and WebKit.
+  tests/contact_form.py` (add `--shots DIR` for screenshots; the first
+  time, `uv run --with playwright==1.58.0 playwright install chromium
+  webkit`). It mocks FormSubmit and blocks every other outside request, so
+  it sends nothing, and runs in Chromium and WebKit.
 - A weekly GitHub Action (`.github/workflows/contact-form-check.yml`) sends a
   test message through the live form and opens an issue, "Contact form check
   failed", if FormSubmit does not accept it. The issue closes itself when the
