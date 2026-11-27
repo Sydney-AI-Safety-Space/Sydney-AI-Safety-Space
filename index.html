@@ -111,13 +111,16 @@
                  CLAUDE.md. -->
             <form class="contact-form" action="https://formsubmit.co/contact@sydneyaisafetyspace.org" method="POST">
                 <label for="cf-name">Name</label>
-                <input id="cf-name" type="text" name="name" autocomplete="name" required>
+                <input id="cf-name" type="text" name="name" autocomplete="name" required aria-describedby="cf-name-error">
+                <p class="field-error" id="cf-name-error" hidden></p>
 
                 <label for="cf-email">Email</label>
-                <input id="cf-email" type="email" name="email" autocomplete="email" required>
+                <input id="cf-email" type="email" name="email" autocomplete="email" required aria-describedby="cf-email-error">
+                <p class="field-error" id="cf-email-error" hidden></p>
 
                 <label for="cf-message">Message</label>
-                <textarea id="cf-message" name="message" rows="5" placeholder="Hi, I am Sam - I would like to drop by on Tuesday around 10am." required></textarea>
+                <textarea id="cf-message" name="message" rows="5" placeholder="Hi, I am Sam - I would like to drop by on Tuesday around 10am." required aria-describedby="cf-message-error"></textarea>
+                <p class="field-error" id="cf-message-error" hidden></p>
 
                 <input type="hidden" name="_subject" value="Sydney AI Safety Space - website enquiry">
                 <input type="hidden" name="_template" value="table">
@@ -135,6 +138,49 @@
             (function () {
                 var form = document.querySelector('.contact-form');
                 if (!form || !window.fetch) return;
+                // Check the fields here rather than leave it to the browser,
+                // whose message is a bubble that vanishes after a moment (or
+                // sits behind a phone's keyboard): the page itself said
+                // nothing. Without JavaScript the browser still checks them.
+                form.noValidate = true;
+                var checks = [
+                    { field: form.querySelector('#cf-name'), say: 'Enter your name' },
+                    // FormSubmit forwards any email at all, even "a@b", so
+                    // also ask for a dot in the domain: a reply needs one.
+                    { field: form.querySelector('#cf-email'), say: 'Enter a valid email',
+                      ok: function (value) { return /@[^@]+\.[^@.]+$/.test(value); } },
+                    { field: form.querySelector('#cf-message'), say: 'Enter a message' }
+                ];
+                // Show or clear the message under a field (the field's
+                // aria-describedby, so screen readers read it with the field).
+                function check(c) {
+                    var value = c.field.value.trim();
+                    var good = value !== '' && c.field.validity.valid && (!c.ok || c.ok(value));
+                    var error = document.getElementById(c.field.getAttribute('aria-describedby'));
+                    error.textContent = good ? '' : c.say;
+                    error.hidden = good;
+                    if (good) c.field.removeAttribute('aria-invalid');
+                    else c.field.setAttribute('aria-invalid', 'true');
+                    return good;
+                }
+                checks.forEach(function (c) {
+                    // Once a field has been flagged, clear it as soon as it is fixed.
+                    c.field.addEventListener('input', function () {
+                        if (c.field.hasAttribute('aria-invalid')) check(c);
+                    });
+                });
+                // FormSubmit's reason for turning a message away, when it is
+                // safe to show: its text is untrusted, so only one short
+                // plain sentence (letters, spaces, , ' ! ? -) passes. Anything
+                // with markup, a link, an address, a number or a second
+                // sentence gets the general message instead, which also covers
+                // its two known rejections (form not activated, no Referer):
+                // neither is the visitor's to fix.
+                function plainReason(text) {
+                    if (typeof text !== 'string') return '';
+                    text = text.trim().replace(/\.$/, '');
+                    return text.length <= 80 && /^[A-Za-z][A-Za-z ,'!?-]*$/.test(text) ? text : '';
+                }
                 var status = form.querySelector('.form-status');
                 var button = form.querySelector('button[type="submit"]');
                 var honeypot = form.querySelector('[name="_honey"]');
@@ -152,10 +198,18 @@
                     // whoever looks into a "the form is broken" report.
                     if (err) console.error('Contact form:', err);
                     status.className = 'form-status form-status-error';
-                    status.innerHTML = 'Sorry, your message could not be sent. Please <a href="mailto:contact@sydneyaisafetyspace.org">email us</a> directly instead.';
+                    status.innerHTML = 'Sorry, your message could not be sent<span></span>. Please <a href="mailto:contact@sydneyaisafetyspace.org">email us</a> directly instead.';
+                    // textContent, never innerHTML: the reason is FormSubmit's text.
+                    if (err && err.reason) status.querySelector('span').textContent = ' (' + err.reason + ')';
                 }
                 form.addEventListener('submit', function (e) {
                     e.preventDefault();
+                    var bad = checks.filter(function (c) { return !check(c); });
+                    if (bad.length) {
+                        status.hidden = true;
+                        bad[0].field.focus();
+                        return;
+                    }
                     status.hidden = false;
                     // Only bots should fill the hidden field, and FormSubmit
                     // ignores it on the /ajax/ endpoint, so stop those here.
@@ -178,7 +232,11 @@
                         // body. An outage page is not JSON, so json() rejects.
                         return res.json().then(function (data) {
                             if (!res.ok || !data || String(data.success) !== 'true') {
-                                throw new Error('FormSubmit rejected the submission');
+                                var err = new Error('FormSubmit rejected the submission: ' + (data && data.message));
+                                // A reason only from an outright refusal, so an
+                                // error status can't come with "submitted successfully".
+                                err.reason = res.ok && data && String(data.success) === 'false' ? plainReason(data.message) : '';
+                                throw err;
                             }
                             thanks();
                         });

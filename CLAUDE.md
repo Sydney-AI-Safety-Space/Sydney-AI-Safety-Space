@@ -13,6 +13,7 @@ This is a static website for the Sydney AI Safety Space, a volunteer-run coworki
 
 - `index.html`, `members.html`, `events.html`, `work.html` - the four pages
 - `static/css/style.css` - Dark theme stylesheet with CSS variables
+- `tests/contact_form.py` - browser test for the contact form's page script
 - `static/favicon.ico` - Site favicon
 - `static/logo-mark.png`, `static/share-image.png`,
   `static/apple-touch-icon.png`, `static/logo.svg` - logo images (below)
@@ -86,6 +87,17 @@ there, and the weekly check can't see it.
   the page script checks that field itself. Without JavaScript the form posts
   to the plain URL, where FormSubmit shows a reCAPTCHA page and then its own
   thank-you page.
+- FormSubmit checks nothing a visitor types: it accepted `a@b` and
+  `not-an-email` as the email (27 Nov 2026). So the page script checks the
+  fields itself, in place of the browser's checks (whose message is a
+  bubble that soon vanishes), and says what is wrong under each field. Its only
+  known rejections are activation and a missing `Referer`, neither of which
+  a visitor can fix. The script shows FormSubmit's reason only when it is
+  one short plain sentence, set with `textContent`; anything else gets the
+  general message. Its text is untrusted: keep it that way.
+- To test the page script: `uv run --with playwright==1.58.0 python
+  tests/contact_form.py` (add `--shots DIR` for screenshots). It mocks
+  FormSubmit, so it sends nothing, and runs in Chromium and WebKit.
 - A weekly GitHub Action (`.github/workflows/contact-form-check.yml`) sends a
   test message through the live form and opens an issue, "Contact form check
   failed", if FormSubmit does not accept it. The issue closes itself when the
@@ -100,7 +112,7 @@ there, and the weekly check can't see it.
     add a job that commits to keep it alive; re-enable it from the Actions
     tab if it stops.
   - It checks that FormSubmit accepts a message, not that the email reaches
-    the inbox, and not the page script (use a browser for that).
+    the inbox, and not the page script (`tests/contact_form.py` does that).
   - After changing the form, do not wait for Monday: run it by hand (Actions,
     Contact Form Check, Run workflow).
   - A PR that changes the check's own files also runs it once, so it sends

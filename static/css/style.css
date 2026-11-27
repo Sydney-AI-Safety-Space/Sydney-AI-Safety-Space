@@ -155,6 +155,17 @@ h1, h2, h3 {
     border-color: var(--link-color);
 }
 
+/* A field the visitor needs to fix, with what to fix right under it */
+.contact-form input[aria-invalid="true"],
+.contact-form textarea[aria-invalid="true"] {
+    border-color: #ff9d9d;
+}
+
+.field-error {
+    margin: -0.75rem 0 0.75rem;
+    font-size: 0.85rem;
+}
+
 .contact-form button {
     align-self: flex-start;
     font-family: inherit;
@@ -182,7 +193,8 @@ h1, h2, h3 {
     color: var(--link-color);
 }
 
-.form-status-error {
+.form-status-error,
+.field-error {
     color: #ff9d9d;
 }
 
