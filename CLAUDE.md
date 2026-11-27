@@ -57,17 +57,28 @@ The CSS uses CSS custom properties (variables) for theming:
 ## Contact Form
 The contact form on `index.html` posts to FormSubmit (formsubmit.co), which
 emails each submission to the address in the form's `action` URL
-(`hunter@hunterjay.com`). There is no account or dashboard to configure.
-- To change the recipient, change the address in the `action` URL, and in the
-  `mailto:` links and the two status messages in the page script. Then send
-  the first submission from the live site yourself: FormSubmit emails the new
-  address an activation link, and until it is clicked every visitor sees the
-  "could not be sent" error. The held submission is delivered once the link
-  is clicked.
+(`contact@sydneyaisafetyspace.org`, a Google Group). There is no account or
+dashboard to configure. If an enquiry seems to have gone missing, look in the
+group's pending messages on groups.google.com: a group can hold suspected spam
+there, and the weekly check can't see it.
+- To change the recipient, activate the new address before the page changes.
+  Until it is activated, every visitor sees the "could not be sent" error.
+  The submission that asked for activation is held, and delivered once the
+  link is opened.
+  1. Run the `curl` at the end of this section with the new address. It
+     answers "needs Activation", and FormSubmit emails the new address an
+     "Activate Form" link. Open the link, then run the `curl` again: it
+     should answer `"success":"true"`.
+  2. Change every occurrence of the old address in `index.html` (`grep -n`):
+     the `action` URL, the `mailto:` links, the visible Email line and the
+     two status messages in the page script.
+  3. Once that is live, run Contact Form Check by hand (below). Its log
+     should say `Form posts to https://formsubmit.co/<new address>`; an old
+     address there means the page had not deployed yet.
 - Activation is per recipient and per site origin (taken from the request's
-  `Referer`). `https://sydneyaisafetyspace.org` is activated. A submission
-  from a local server asks for a separate activation, and a request with no
-  `Referer` is rejected.
+  `Referer`). The origin to activate is `https://sydneyaisafetyspace.org`. A
+  submission from a local server asks for a separate activation, and a
+  request with no `Referer` is rejected.
 - The page script posts to the `/ajax/` version of the same URL. FormSubmit
   answers HTTP 200 even when it rejects a submission, so the script reads
   `success` from the JSON body.
@@ -99,7 +110,7 @@ emails each submission to the address in the form's `action` URL
     `https://sydneyaisafetyspace.org/events.html`. Run it again with the
     field empty to close the issue.
 - To test delivery without a browser (this emails the recipient):
-  `curl -X POST https://formsubmit.co/ajax/hunter@hunterjay.com -H 'Accept: application/json' -H 'Referer: https://sydneyaisafetyspace.org/' -F name=Test -F email=a@b.co -F message=Test`
+  `curl -X POST https://formsubmit.co/ajax/contact@sydneyaisafetyspace.org -H 'Accept: application/json' -H 'Referer: https://sydneyaisafetyspace.org/' --form-string name=Test --form-string email=a@b.co --form-string message=Test`
 
 ## Deployment Notes
 The site is served by GitHub Pages from `main` at https://sydneyaisafetyspace.org
