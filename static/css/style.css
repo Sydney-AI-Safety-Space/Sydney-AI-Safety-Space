@@ -159,9 +159,9 @@ h1, h2, h3 {
 .contact-form button,
 .donate-button {
     align-self: flex-start;
-    display: inline-block;
     font-family: inherit;
     font-size: 0.9rem;
+    line-height: normal;
     color: var(--text-color);
     background-color: rgba(255, 255, 255, 0.04);
     border: 1px solid var(--border-color);
@@ -171,7 +171,9 @@ h1, h2, h3 {
 }
 
 .contact-form button:hover,
-.donate-button:hover {
+.contact-form button:focus-visible,
+.donate-button:hover,
+.donate-button:focus-visible {
     border-color: var(--link-color);
     color: var(--link-color);
     text-decoration: none;
