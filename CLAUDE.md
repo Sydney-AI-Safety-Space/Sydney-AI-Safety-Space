@@ -58,17 +58,23 @@ The CSS uses CSS custom properties (variables) for theming:
 The contact form on `index.html` posts to FormSubmit (formsubmit.co), which
 emails each submission to the address in the form's `action` URL
 (`contact@sydneyaisafetyspace.org`, a Google Group). There is no account or
-dashboard to configure.
+dashboard to configure. If an enquiry seems to have gone missing, look in the
+group's pending messages on groups.google.com: a group can hold suspected spam
+there, and nothing else reports it.
 - To change the recipient, activate the new address before the page changes.
-  Until it is activated, every visitor sees the "could not be sent" error
-  (their message is held, and delivered once it is).
+  Until it is activated, every visitor sees the "could not be sent" error.
+  The submission that asked for activation is held, and delivered once the
+  link is opened.
   1. Run the `curl` at the end of this section with the new address. It
      answers "needs Activation", and FormSubmit emails the new address an
      "Activate Form" link. Open the link, then run the `curl` again: it
      should answer `"success":"true"`.
-  2. Change the address in the `action` URL, the `mailto:` links and the two
-     status messages in the page script.
-  3. Once that is live, run Contact Form Check by hand (below).
+  2. Change every occurrence of the old address in `index.html` (`grep -n`):
+     the `action` URL, the `mailto:` links, the visible Email line and the
+     two status messages in the page script.
+  3. Once that is live, run Contact Form Check by hand (below). Its log
+     should say `Form posts to https://formsubmit.co/<new address>`; an old
+     address there means the page had not deployed yet.
 - Activation is per recipient and per site origin (taken from the request's
   `Referer`). The origin to activate is `https://sydneyaisafetyspace.org`. A
   submission from a local server asks for a separate activation, and a
