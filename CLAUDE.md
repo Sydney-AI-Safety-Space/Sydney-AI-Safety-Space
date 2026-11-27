@@ -55,6 +55,15 @@ The CSS uses CSS custom properties (variables) for theming:
 - Responsive design with mobile breakpoint at 640px
 - Uses flexbox for layout
 
+## Donations
+The Donate and Donate monthly buttons, centred at the end of the home page
+under the supporters section's closing line, are Stripe payment links
+(one-off, and monthly). The amounts and the payment page's wording are set
+in Stripe, not here. If a link is turned off in Stripe, nothing on the site
+flags it. The line and the buttons share one block with `id="donate"`, so
+other pages or print can link to `index.html#donate`: keep the id if
+anything does.
+
 ## Contact Form
 The contact form on `index.html` posts to FormSubmit (formsubmit.co), which
 emails each submission to the address in the form's `action` URL
