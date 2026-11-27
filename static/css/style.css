@@ -179,11 +179,25 @@ h1, h2, h3 {
     text-decoration: none;
 }
 
+/* The supporters section's closing line and the Donate buttons read as
+   one block: the line sits as close to the buttons as they sit to each
+   other. */
+.donate {
+    margin-top: 2rem;
+    text-align: center;
+}
+
+.donate-lead {
+    font-style: italic;
+    margin: 0 0 0.75rem;
+}
+
 .donate-links {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
     gap: 0.75rem;
+    margin-top: 0;
 }
 
 .form-status {
